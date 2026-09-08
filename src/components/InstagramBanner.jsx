@@ -38,7 +38,7 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
 
   return (
     <div className="w-full max-w-[420px] mx-auto mb-4">
-      <div className="bg-white text-[#262626] rounded-xl border border-[#DBDBDB] shadow-sm overflow-hidden p-3 relative">
+      <div className="bg-white text-[#262626] rounded-xl border border-[#DBDBDB] overflow-hidden p-3 relative">
         <header
           className="
             mx-auto

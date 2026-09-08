@@ -35,7 +35,7 @@ export const App = () => {
       <div className="fixed inset-0 pointer-events-none -z-10 meta-mesh-bg" aria-hidden="true" />
 
       {/* 420px Mobile Container */}
-      <div className="w-full max-w-[420px] min-h-screen flex flex-col bg-transparent text-[#1c1e21] shadow-xl relative overflow-x-hidden border-x border-black/[0.06]">
+      <div className="w-full max-w-[420px] min-h-screen flex flex-col bg-transparent text-[#1c1e21] relative overflow-x-hidden border-x border-black/[0.06]">
         <ScrollToTop />
 
         {/* Mobile Top Header */}
