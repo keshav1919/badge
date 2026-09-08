@@ -12,7 +12,10 @@ export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
-  const userAvatarSrc = currentUser?.avatarUrl || currentUser?.profilePic;
+  const userAvatarSrc =
+    currentUser?.avatarUrl ||
+    currentUser?.profilePic ||
+    (currentUser?.rawProfilePic ? `/api/avatar-proxy?url=${encodeURIComponent(currentUser.rawProfilePic)}` : null);
 
   return (
     <>
@@ -67,15 +70,45 @@ export const Header = () => {
               <span className="absolute 0.5 top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#0064E0]"></span>
             </Link>
 
-            <button
-              type="button"
-              onClick={() => setIsUserModalOpen(true)}
-              className="p-1 hover:bg-black/5 rounded-full active:scale-90 transition-all cursor-pointer"
-              aria-label="Account"
-              title="Account"
-            >
-              <User className="w-5 h-5 stroke-[2] text-[#1c1e21]" />
-            </button>
+            {currentUser ? (
+              <button
+                type="button"
+                onClick={() => setIsUserModalOpen(true)}
+                className="flex items-center gap-1.5 py-0.5 px-2 hover:bg-black/5 rounded-full active:scale-95 transition-all cursor-pointer border border-black/[0.08] bg-white/70 shrink-0"
+                aria-label={`Account @${currentUser.username}`}
+                title={`Connected as @${currentUser.username}`}
+              >
+                <div className="w-6 h-6 rounded-full p-[1.5px] ig-story-gradient shrink-0">
+                  <div className="w-full h-full rounded-full bg-white p-[0.5px] overflow-hidden">
+                    {userAvatarSrc ? (
+                      <img
+                        src={userAvatarSrc}
+                        alt={currentUser.username}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full rounded-full bg-[#262626] text-white flex items-center justify-center text-[10px] font-bold">
+                        {currentUser.username?.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <span className="text-[12px] font-bold text-[#1c1e21] max-w-[85px] truncate">
+                  @{currentUser.username}
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsUserModalOpen(true)}
+                className="p-1 hover:bg-black/5 rounded-full active:scale-90 transition-all cursor-pointer"
+                aria-label="Account"
+                title="Account"
+              >
+                <User className="w-5 h-5 stroke-[2] text-[#1c1e21]" />
+              </button>
+            )}
           </div>
         </div>
 
