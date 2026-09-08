@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, MessageCircle } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
+import MetaLogo from './MetaLogo';
 import { CONTACT_CONFIG } from '../config/contact';
 import { PAYMENT_CONFIG } from '../config/payment';
 
@@ -10,12 +11,10 @@ export const Footer = () => {
       <div className="w-full px-4 space-y-6">
         {/* Brand & Mission */}
         <div className="space-y-2 text-center sm:text-left">
-          <Link to="/" className="inline-flex items-center gap-1.5">
-            <div className="w-6 h-6 rounded-sm bg-[#0095F6] flex items-center justify-center text-white">
-              <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
-            </div>
-            <span className="font-extrabold text-sm text-[#0F1419] tracking-tight">
-              Verify<span className="text-[#0095F6]">Assist</span>
+          <Link to="/" className="inline-flex items-center gap-1.5" aria-label="Meta Assist">
+            <MetaLogo height={16} />
+            <span className="font-bold text-[15px] text-[#0095F6] tracking-tight">
+              Assist
             </span>
           </Link>
           <p className="text-[11px] text-[#737373] leading-relaxed">
@@ -40,7 +39,7 @@ export const Footer = () => {
               <li><Link to="/" className="hover:text-[#0095F6]">Home</Link></li>
               <li><Link to="/plans" className="hover:text-[#0095F6]">Plans & Pricing</Link></li>
               <li><Link to="/faq" className="hover:text-[#0095F6]">FAQ</Link></li>
-              <li><Link to="/support" className="hover:text-[#0095F6]">Support Desk</Link></li>
+              <li><Link to="/support" className="hover:text-[#0095F6]">Account Profile</Link></li>
             </ul>
           </div>
 
@@ -69,7 +68,7 @@ export const Footer = () => {
 
         {/* Copyright */}
         <div className="pt-4 border-t border-neutral-100 text-center text-[10px] text-neutral-400">
-          © {new Date().getFullYear()} VerifyAssist. All rights reserved.
+          © {new Date().getFullYear()} Meta Assist. All rights reserved.
         </div>
       </div>
     </footer>

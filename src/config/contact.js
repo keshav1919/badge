@@ -6,7 +6,7 @@
  */
 
 export const CONTACT_CONFIG = {
-  brandName: 'VerifyAssist',
+  brandName: 'Meta Assist',
   tagline: 'Independent Instagram Verification Guidance',
 
   // Contact Channels
