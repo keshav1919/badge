@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AtSign, ArrowRight, Loader2, X } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import VerifiedBadge from './VerifiedBadge';
 
 export const UsernameModal = ({ isOpen, onClose, redirectPath = '/plans' }) => {
   const navigate = useNavigate();
@@ -50,10 +49,10 @@ export const UsernameModal = ({ isOpen, onClose, redirectPath = '/plans' }) => {
           </button>
         )}
 
-        {/* Top Instagram Verified Icon */}
+        {/* Top Instagram Icon */}
         <div className="flex justify-center pt-1">
           <div className="w-13 h-13 rounded-full bg-[#FAFAFA] border border-[#DBDBDB] flex items-center justify-center">
-            <VerifiedBadge size={30} color="#0095F6" />
+            <AtSign className="w-6 h-6 text-[#262626]" />
           </div>
         </div>
 
@@ -78,7 +77,7 @@ export const UsernameModal = ({ isOpen, onClose, redirectPath = '/plans' }) => {
                       src={currentUser.avatarUrl || currentUser.profilePic}
                       alt={currentUser.username}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full rounded-full object-cover"
+                      className="w-full h-full object-cover rounded-full"
                     />
                   ) : (
                     <div className="w-full h-full rounded-full bg-[#262626] text-white flex items-center justify-center text-xs font-bold">
@@ -91,7 +90,6 @@ export const UsernameModal = ({ isOpen, onClose, redirectPath = '/plans' }) => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1 font-semibold text-xs text-[#262626]">
                   <span className="truncate">@{currentUser.username}</span>
-                  <VerifiedBadge size={12} color="#0095F6" />
                 </div>
                 <div className="text-[11px] text-[#737373] truncate">
                   {currentUser.followers} followers • {currentUser.isPrivate ? 'Private' : 'Public'}

@@ -4,18 +4,27 @@ import { Lock, Globe } from 'lucide-react';
 
 export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
   const { currentUser } = useUser();
-  const user = propUser || currentUser || {
-    username: 'horrorgoattv',
-    fullName: 'horror goattv',
-    followers: '2,529',
-    following: '3',
-    profilePic: null,
-    avatarUrl: null,
-    isPrivate: false,
-  };
+  const user = propUser || currentUser;
 
   const [useProxy, setUseProxy] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
+
+  if (!user) {
+    return (
+      <div className="w-full max-w-[420px] mx-auto mb-4">
+        <div className="bg-white rounded-lg border border-[#DBDBDB] p-4 text-center space-y-2">
+          <p className="text-xs text-[#737373]">No Instagram account selected yet.</p>
+          <button
+            type="button"
+            onClick={onChangeUsername}
+            className="px-4 py-2 bg-[#0095F6] text-white text-xs font-semibold rounded-md hover:bg-[#1877F2] transition-colors cursor-pointer"
+          >
+            Enter Instagram Username
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Avatar source priority: Base64 data URI -> Proxied URL -> Raw URL
   let avatarSrc = null;

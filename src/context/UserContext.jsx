@@ -10,8 +10,8 @@ export const UserProvider = ({ children }) => {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Only accept cached user if it has a valid detected profile photo data URI
-        if (parsed?.username && typeof parsed?.avatarUrl === 'string' && parsed.avatarUrl.startsWith('data:image')) {
+        // Do not use demo fallback account
+        if (parsed?.username && parsed.username !== 'horrorgoattv') {
           return parsed;
         }
       }
@@ -67,19 +67,16 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  // Auto-detect Instagram profile photo on mount or whenever currentUser lacks high-res photo
+  // Save to localStorage only when user actively enters an account (NO fallback auto-fetch)
   useEffect(() => {
-    if (!currentUser || !currentUser.avatarUrl || !currentUser.avatarUrl.startsWith('data:image')) {
-      const targetUser = currentUser?.username || 'horrorgoattv';
-      fetchUser(targetUser);
-    } else {
+    if (currentUser?.username && currentUser.username !== 'horrorgoattv') {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(currentUser));
       } catch (e) {
         console.error('Failed to cache user to localStorage', e);
       }
     }
-  }, [currentUser, fetchUser]);
+  }, [currentUser]);
 
   const clearUser = useCallback(() => {
     setCurrentUser(null);

@@ -20,9 +20,9 @@ export const PlanCard = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const displayUser = currentUser || {
-    username: 'alex_rivera',
-    fullName: 'Alex Rivera',
-    followers: '48.2K',
+    username: 'your_account',
+    fullName: 'Your Instagram Account',
+    followers: '0',
     profilePic: null,
     avatarUrl: null,
   };

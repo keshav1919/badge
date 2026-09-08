@@ -70,24 +70,11 @@ export const Header = () => {
             <button
               type="button"
               onClick={() => setIsUserModalOpen(true)}
-              className="p-0.5 hover:bg-black/5 rounded-full active:scale-90 transition-all cursor-pointer"
-              aria-label="Account Profile"
-              title={currentUser?.username ? `@${currentUser.username}` : 'Account'}
+              className="p-1 hover:bg-black/5 rounded-full active:scale-90 transition-all cursor-pointer"
+              aria-label="Account"
+              title="Account"
             >
-              {userAvatarSrc ? (
-                <div className="w-6 h-6 rounded-full ring-1.5 ring-[#0064E0] overflow-hidden">
-                  <img
-                    src={userAvatarSrc}
-                    alt={currentUser.username}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="p-0.5">
-                  <User className="w-5 h-5 stroke-[2]" />
-                </div>
-              )}
+              <User className="w-5 h-5 stroke-[2] text-[#1c1e21]" />
             </button>
           </div>
         </div>

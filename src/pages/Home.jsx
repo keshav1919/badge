@@ -130,7 +130,6 @@ export const Home = () => {
               <div className="text-left min-w-0">
                 <div className="flex items-center gap-1 text-xs font-bold text-[#1c1e21]">
                   <span className="truncate">@{currentUser.username}</span>
-                  <VerifiedBadge size={13} color="#3897F0" />
                 </div>
                 <div className="text-[11px] text-[#737373] truncate flex items-center gap-1">
                   <span>{currentUser.followers} followers</span>
