@@ -39,15 +39,9 @@ export const Header = () => {
               </button>
             )}
 
-            {/* Meta Brand Wordmark */}
-            <Link to="/" className="flex items-center gap-1.5 group">
-              <MetaLogo size={28} />
-              <span
-                className="text-[19px] font-semibold tracking-tight text-[#1c1e21]"
-                style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
-              >
-                Meta
-              </span>
+            {/* Meta Brand Logo & Name (100% official from static.xx.fbcdn.net) */}
+            <Link to="/" className="flex items-center group py-0.5" aria-label="Meta">
+              <MetaLogo height={16} />
             </Link>
           </div>
 
