@@ -16,6 +16,7 @@ function instagramApiPlugin() {
           const username = pathname.replace('/api/instagram/', '').split('?')[0];
           res.setHeader('Content-Type', 'application/json');
           res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
           try {
             const data = await fetchInstagramProfile(username);
             res.end(JSON.stringify(data));

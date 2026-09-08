@@ -4,6 +4,10 @@ const UserContext = createContext(null);
 
 const STORAGE_KEY = 'verifyassist_active_user';
 
+const profileCache = new Map();
+const inflightPromises = new Map();
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
+
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
@@ -12,6 +16,10 @@ export const UserProvider = ({ children }) => {
         const parsed = JSON.parse(saved);
         // Do not use demo fallback account
         if (parsed?.username && parsed.username !== 'horrorgoattv') {
+          profileCache.set(parsed.username.toLowerCase(), {
+            user: parsed,
+            timestamp: Date.now(),
+          });
           return parsed;
         }
       }
@@ -31,41 +39,69 @@ export const UserProvider = ({ children }) => {
       return { success: false, error: 'Please enter a username' };
     }
 
+    // 1. Return immediately if active currentUser matches and has profile data
+    if (currentUser?.username?.toLowerCase() === cleanUsername && (currentUser.avatarUrl || currentUser.profilePic)) {
+      setError(null);
+      return { success: true, user: currentUser };
+    }
+
+    // 2. Return from in-memory cache if still fresh
+    const cached = profileCache.get(cleanUsername);
+    if (cached && (Date.now() - cached.timestamp < CACHE_TTL_MS)) {
+      setCurrentUser(cached.user);
+      setError(null);
+      setIsLoading(false);
+      return { success: true, user: cached.user };
+    }
+
+    // 3. Deduplicate concurrent in-flight requests for identical username
+    if (inflightPromises.has(cleanUsername)) {
+      return inflightPromises.get(cleanUsername);
+    }
+
     setIsLoading(true);
     setError(null);
 
-    try {
-      const res = await fetch(`/api/instagram/${encodeURIComponent(cleanUsername)}`);
-      const data = await res.json();
+    const promise = (async () => {
+      try {
+        const res = await fetch(`/api/instagram/${encodeURIComponent(cleanUsername)}`);
+        const data = await res.json();
 
-      if (data && data.exists) {
-        const userObj = {
-          username: data.username,
-          fullName: data.fullName || data.username,
-          profilePic: data.profilePic,
-          avatarUrl: data.avatarUrl || data.profilePic,
-          followers: data.followers || '0',
-          following: data.following || '0',
-          posts: data.posts || '0',
-          isPrivate: Boolean(data.isPrivate),
-        };
-        setCurrentUser(userObj);
-        setIsLoading(false);
-        return { success: true, user: userObj };
-      } else {
-        const errMessage = data?.error || 'Account not found on Instagram. Please enter a valid username.';
+        if (data && data.exists) {
+          const userObj = {
+            username: data.username,
+            fullName: data.fullName || data.username,
+            profilePic: data.profilePic,
+            avatarUrl: data.avatarUrl || data.profilePic,
+            followers: data.followers || '0',
+            following: data.following || '0',
+            posts: data.posts || '0',
+            isPrivate: Boolean(data.isPrivate),
+          };
+          profileCache.set(cleanUsername, { user: userObj, timestamp: Date.now() });
+          setCurrentUser(userObj);
+          setIsLoading(false);
+          return { success: true, user: userObj };
+        } else {
+          const errMessage = data?.error || 'Account not found on Instagram. Please enter a valid username.';
+          setError(errMessage);
+          setIsLoading(false);
+          return { success: false, error: errMessage };
+        }
+      } catch (err) {
+        console.warn('Instagram fetch error:', err);
+        const errMessage = 'Unable to verify account right now. Please try again.';
         setError(errMessage);
         setIsLoading(false);
         return { success: false, error: errMessage };
+      } finally {
+        inflightPromises.delete(cleanUsername);
       }
-    } catch (err) {
-      console.warn('Instagram fetch error:', err);
-      const errMessage = 'Unable to verify account right now. Please try again.';
-      setError(errMessage);
-      setIsLoading(false);
-      return { success: false, error: errMessage };
-    }
-  }, []);
+    })();
+
+    inflightPromises.set(cleanUsername, promise);
+    return promise;
+  }, [currentUser]);
 
   // Save to localStorage only when user actively enters an account (NO fallback auto-fetch)
   useEffect(() => {
@@ -79,10 +115,13 @@ export const UserProvider = ({ children }) => {
   }, [currentUser]);
 
   const clearUser = useCallback(() => {
+    if (currentUser?.username) {
+      profileCache.delete(currentUser.username.toLowerCase());
+    }
     setCurrentUser(null);
     setError(null);
     localStorage.removeItem(STORAGE_KEY);
-  }, []);
+  }, [currentUser]);
 
   return (
     <UserContext.Provider

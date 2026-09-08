@@ -17,6 +17,17 @@ function decodeHtmlEntities(str = '') {
 }
 
 /**
+ * In-memory cache for profiles and avatar buffers to reduce outbound requests
+ */
+const serverProfileCache = new Map();
+const serverInflightProfileRequests = new Map();
+const PROFILE_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+const avatarBufferCache = new Map();
+const MAX_AVATAR_CACHE_SIZE = 150;
+const AVATAR_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+/**
  * Fetch Instagram profile information using server-side crawler user agent
  */
 export async function fetchInstagramProfile(rawUsername) {
@@ -26,17 +37,29 @@ export async function fetchInstagramProfile(rawUsername) {
     return { exists: false, error: 'Invalid username format' };
   }
 
-  const url = `https://www.instagram.com/${cleanUsername}/`;
+  // Check server in-memory profile cache
+  const cached = serverProfileCache.get(cleanUsername);
+  if (cached && (Date.now() - cached.timestamp < PROFILE_CACHE_TTL)) {
+    return cached.data;
+  }
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-      },
-    });
+  // Deduplicate concurrent in-flight requests for identical username
+  if (serverInflightProfileRequests.has(cleanUsername)) {
+    return await serverInflightProfileRequests.get(cleanUsername);
+  }
+
+  const fetchPromise = (async () => {
+    const url = `https://www.instagram.com/${cleanUsername}/`;
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Cache-Control': 'no-cache',
+        },
+      });
 
     if (!response.ok && response.status === 404) {
       return { exists: false, error: 'User does not exist on Instagram' };
@@ -135,7 +158,7 @@ export async function fetchInstagramProfile(rawUsername) {
 
     const finalAvatar = avatarDataUri || rawProfilePic;
 
-    return {
+    const profileData = {
       exists: true,
       username: cleanUsername,
       fullName: fullName || cleanUsername,
@@ -147,10 +170,24 @@ export async function fetchInstagramProfile(rawUsername) {
       posts,
       isPrivate,
     };
+
+    serverProfileCache.set(cleanUsername, { data: profileData, timestamp: Date.now() });
+    if (serverProfileCache.size > 200) {
+      const oldestKey = serverProfileCache.keys().next().value;
+      serverProfileCache.delete(oldestKey);
+    }
+
+    return profileData;
   } catch (error) {
     console.error(`[InstagramService] Error fetching ${cleanUsername}:`, error.message);
     return { exists: false, error: 'Network error connecting to Instagram' };
+  } finally {
+    serverInflightProfileRequests.delete(cleanUsername);
   }
+  })();
+
+  serverInflightProfileRequests.set(cleanUsername, fetchPromise);
+  return await fetchPromise;
 }
 
 /**
@@ -160,6 +197,19 @@ export async function proxyAvatarImage(imageUrl, res) {
   if (!imageUrl) {
     res.statusCode = 400;
     res.end('Missing image URL');
+    return;
+  }
+
+  // Check in-memory avatar buffer cache
+  const cached = avatarBufferCache.get(imageUrl);
+  if (cached && (Date.now() - cached.timestamp < AVATAR_CACHE_TTL)) {
+    res.writeHead(200, {
+      'Content-Type': cached.contentType,
+      'Content-Length': cached.buffer.length,
+      'Cache-Control': 'public, max-age=86400, immutable',
+      'Access-Control-Allow-Origin': '*',
+    });
+    res.end(cached.buffer);
     return;
   }
 
@@ -177,23 +227,49 @@ export async function proxyAvatarImage(imageUrl, res) {
         },
       },
       (proxyRes) => {
+        const contentType = proxyRes.headers['content-type'] || 'image/jpeg';
         res.writeHead(proxyRes.statusCode || 200, {
-          'Content-Type': proxyRes.headers['content-type'] || 'image/jpeg',
-          'Cache-Control': 'public, max-age=86400',
+          'Content-Type': contentType,
+          'Cache-Control': 'public, max-age=86400, immutable',
           'Access-Control-Allow-Origin': '*',
         });
-        proxyRes.pipe(res);
+
+        const chunks = [];
+        proxyRes.on('data', (chunk) => {
+          chunks.push(chunk);
+          res.write(chunk);
+        });
+
+        proxyRes.on('end', () => {
+          res.end();
+          if (proxyRes.statusCode === 200) {
+            const buffer = Buffer.concat(chunks);
+            avatarBufferCache.set(imageUrl, {
+              buffer,
+              contentType,
+              timestamp: Date.now(),
+            });
+            if (avatarBufferCache.size > MAX_AVATAR_CACHE_SIZE) {
+              const oldestKey = avatarBufferCache.keys().next().value;
+              avatarBufferCache.delete(oldestKey);
+            }
+          }
+        });
       }
     );
 
     request.on('error', (err) => {
       console.error('[AvatarProxy] Request error:', err.message);
-      res.statusCode = 502;
-      res.end('Bad Gateway');
+      if (!res.headersSent) {
+        res.statusCode = 502;
+        res.end('Bad Gateway');
+      }
     });
   } catch (err) {
     console.error('[AvatarProxy] Invalid URL:', err.message);
-    res.statusCode = 400;
-    res.end('Invalid URL');
+    if (!res.headersSent) {
+      res.statusCode = 400;
+      res.end('Invalid URL');
+    }
   }
 }

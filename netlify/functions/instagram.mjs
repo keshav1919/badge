@@ -25,7 +25,7 @@ export async function handler(event) {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=120',
+        'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
       },
       body: JSON.stringify(data),
     };
@@ -66,7 +66,7 @@ export default async (req) => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=120',
+        'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
       },
     });
   } catch (err) {
