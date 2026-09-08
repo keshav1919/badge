@@ -74,7 +74,7 @@ export const Header = () => {
               <button
                 type="button"
                 onClick={() => setIsUserModalOpen(true)}
-                className="flex items-center gap-1.5 py-0.5 px-2 hover:bg-black/5 rounded-full active:scale-95 transition-all cursor-pointer border border-black/[0.08] bg-white/70 shrink-0"
+                className="flex items-center gap-1.5 p-1 hover:bg-black/5 rounded-full active:scale-95 transition-all cursor-pointer shrink-0"
                 aria-label={`Account @${currentUser.username}`}
                 title={`Connected as @${currentUser.username}`}
               >
