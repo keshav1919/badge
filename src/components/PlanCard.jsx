@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Check,
   ShieldCheck,
   Headphones,
   Sparkles,
@@ -15,7 +14,7 @@ import { formatCurrency } from '../utils/formatters';
 import { useUser } from '../context/UserContext';
 import paymentService from '../services/paymentService';
 
-export const PlanCard = ({ onOpenUsernameModal }) => {
+export const PlanCard = () => {
   const navigate = useNavigate();
   const { currentUser } = useUser();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -83,148 +82,132 @@ export const PlanCard = ({ onOpenUsernameModal }) => {
 
   return (
     <>
-      {/* Top Meta Accounts Center Page Header (Spacious, authentic Meta styling) */}
-      <div className="text-left mb-4 px-1">
-        <div className="flex items-center gap-2 mb-2">
-          <MetaLogo height={14} />
-          <span className="text-[#8A8D91] text-xs leading-none">•</span>
-          <span className="text-xs font-semibold text-[#65676B] tracking-tight">
-            Accounts Center
-          </span>
-        </div>
-        <h1 className="text-[22px] font-bold text-[#1C1E21] tracking-tight leading-[1.25] mb-1.5">
-          Set up verification assistance on Instagram
-        </h1>
-        <p className="text-[13.5px] text-[#65676B] leading-[1.45]">
-          Guided account review, eligibility preparation, and onboarding in one place.
-        </p>
-      </div>
-
-      {/* Selected Account Profile Card (Native Instagram card) */}
-      <div className="bg-white rounded-2xl border border-black/[0.08] p-3.5 mb-3 flex items-center justify-between text-left">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-11 h-11 rounded-full p-[2px] ig-story-gradient shrink-0">
-            <div className="w-full h-full rounded-full bg-white p-[1.5px] overflow-hidden">
-              {avatarSrc ? (
-                <img
-                  src={avatarSrc}
-                  alt={displayUser.username}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full rounded-full bg-[#262626] text-white flex items-center justify-center text-sm font-bold">
-                  {(displayUser.username || 'U').charAt(0).toUpperCase()}
-                </div>
-              )}
-            </div>
+      <div className="w-full max-w-[420px] mx-auto bg-white rounded-lg border border-[#DBDBDB] overflow-hidden">
+        {/* Meta Accounts Center Header Banner */}
+        <div className="p-3.5 border-b border-[#EFEFEF] space-y-1">
+          <div className="flex items-center gap-2 mb-1">
+            <MetaLogo size={18} />
+            <span className="text-xs font-semibold text-[#737373] tracking-tight">
+              Accounts Center
+            </span>
           </div>
-          <div className="min-w-0">
-            <div className="font-bold text-[14px] text-[#1C1E21] truncate">
-              @{displayUser.username}
-            </div>
-            <div className="text-[12px] text-[#65676B] truncate flex items-center gap-1 mt-0.5">
-              <span>Instagram</span>
-              <span>•</span>
-              <span>{displayUser.followers || '0'} followers</span>
-              {displayUser.isPrivate !== undefined && (
-                <>
-                  <span>•</span>
-                  <span>{displayUser.isPrivate ? 'Private' : 'Public'}</span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 ml-2">
-          {onOpenUsernameModal && (
-            <button
-              type="button"
-              onClick={onOpenUsernameModal}
-              className="text-xs font-semibold text-[#0095F6] hover:text-[#1877F2] transition-colors px-1 py-0.5 cursor-pointer"
-            >
-              Change
-            </button>
-          )}
-          <div className="w-5 h-5 rounded-full bg-[#0095F6] flex items-center justify-center text-white shrink-0">
-            <Check className="w-3 h-3 stroke-[3]" />
-          </div>
-        </div>
-      </div>
-
-      {/* Pricing Summary Card */}
-      <div className="bg-white rounded-2xl border border-black/[0.08] p-4 mb-3 flex items-center justify-between text-left">
-        <div>
-          <span className="text-[14px] font-bold text-[#1C1E21] block">
-            Annual guidance plan
-          </span>
-          <p className="text-[12px] text-[#65676B] mt-0.5">
-            Yearly subscription • Cancel anytime before renewal
+          <h2 className="text-lg font-bold text-[#262626] tracking-tight leading-snug">
+            Set up verification assistance on Instagram
+          </h2>
+          <p className="text-xs text-[#737373] leading-relaxed">
+            Guided account review, eligibility preparation, and onboarding in one place.
           </p>
         </div>
-        <div className="text-right shrink-0 ml-3">
-          <span className="text-xl font-black text-[#0095F6]">
-            {formatCurrency(PAYMENT_CONFIG.amount)}
-          </span>
-          <span className="text-xs font-semibold text-[#65676B]"> / yr</span>
-        </div>
-      </div>
 
-      {/* Meta Accounts Center What's Included Feature List */}
-      <div className="bg-white rounded-2xl border border-black/[0.08] p-4 text-left space-y-3.5 mb-4">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-[#65676B]">
-          What's included with verification assistance:
-        </div>
-
-        <div className="space-y-3">
-          {benefits.map((b, i) => {
-            const Icon = b.icon;
-            return (
-              <div key={i} className="flex items-start gap-3">
-                <div className="mt-0.5 shrink-0">
-                  {b.isCustomBadge ? (
-                    <VerifiedBadge size={19} color="#3897F0" />
+        {/* Profile Selector Tile (Exact Meta style) */}
+        <div className="p-3.5 bg-[#FAFAFA] border-b border-[#EFEFEF]">
+          <div className="bg-white rounded-lg border border-[#DBDBDB] p-3 flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-11 h-11 rounded-full p-[2px] ig-story-gradient shrink-0">
+                <div className="w-full h-full rounded-full bg-white p-[1.5px]">
+                  {avatarSrc ? (
+                    <img
+                      src={avatarSrc}
+                      alt={displayUser.username}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full rounded-full object-cover"
+                    />
                   ) : (
-                    <Icon className={`w-[19px] h-[19px] ${b.color || 'text-[#0095F6]'}`} />
+                    <div className="w-full h-full rounded-full bg-[#262626] text-white flex items-center justify-center text-sm font-bold">
+                      {displayUser.username.charAt(0).toUpperCase()}
+                    </div>
                   )}
                 </div>
-                <div className="space-y-0.5 min-w-0">
-                  <div className="text-[13.5px] font-bold text-[#1C1E21] leading-tight">
-                    {b.title}
-                  </div>
-                  <div className="text-[12px] text-[#65676B] leading-relaxed">
-                    {b.desc}
-                  </div>
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1 font-bold text-sm text-[#262626] truncate">
+                  <span className="truncate">{displayUser.username}</span>
+                  <VerifiedBadge size={14} className="shrink-0" />
+                </div>
+                <div className="text-xs text-[#737373] truncate">
+                  Instagram • {displayUser.followers || '0'} followers
                 </div>
               </div>
-            );
-          })}
+            </div>
+
+            {/* Selected Radio Indicator */}
+            <div className="w-5 h-5 rounded-full bg-[#0095F6] flex items-center justify-center text-white shrink-0 ml-2">
+              <svg className="w-3 h-3 fill-current stroke-current" viewBox="0 0 20 20">
+                <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Pricing Summary (No button in page) */}
+        <div className="p-3.5 bg-[#F8FAFC] border-b border-[#EFEFEF] flex items-center justify-between">
+          <div>
+            <span className="text-sm font-bold text-[#262626]">Annual guidance</span>
+            <p className="text-[11px] text-[#737373]">Yearly plan • Cancel anytime before renewal</p>
+          </div>
+          <div className="text-right">
+            <span className="text-xl font-black text-[#0095F6]">
+              {formatCurrency(PAYMENT_CONFIG.amount)}
+            </span>
+            <span className="text-xs font-semibold text-[#737373]"> / yr</span>
+          </div>
+        </div>
+
+        {/* Meta Accounts Center Feature List */}
+        <div className="p-4 space-y-3.5 bg-white">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#737373]">
+            What's included with verification assistance:
+          </div>
+
+          <div className="space-y-3">
+            {benefits.map((b, i) => {
+              const Icon = b.icon;
+              return (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="mt-0.5 shrink-0">
+                    {b.isCustomBadge ? (
+                      <VerifiedBadge size={18} />
+                    ) : (
+                      <Icon className={`w-[18px] h-[18px] ${b.color || 'text-[#0095F6]'}`} />
+                    )}
+                  </div>
+                  <div className="space-y-0.5">
+                    <div className="text-sm font-bold text-[#262626] leading-tight">
+                      {b.title}
+                    </div>
+                    <div className="text-xs text-[#737373] leading-relaxed">
+                      {b.desc}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Permanently Fixed Footer Bottom Bar with Pay Button */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-black/[0.08] p-3">
-        <div className="max-w-[420px] mx-auto flex items-center justify-between gap-4">
-          <div className="text-left">
-            <div className="text-[10px] uppercase font-bold text-[#65676B] tracking-wide">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#DBDBDB] p-3">
+        <div className="max-w-[420px] mx-auto flex items-center justify-between gap-3">
+          <div>
+            <div className="text-[10px] uppercase font-bold text-[#737373] tracking-wide">
               Verification Plan
             </div>
-            <div className="text-lg font-black text-[#1C1E21] leading-tight">
+            <div className="text-lg font-black text-[#262626] leading-tight">
               {formatCurrency(PAYMENT_CONFIG.amount)}{' '}
-              <span className="text-xs font-normal text-[#65676B]">/ yr</span>
+              <span className="text-xs font-normal text-[#737373]">/ yr</span>
             </div>
           </div>
           <button
             type="button"
             onClick={handleDirectPay}
             disabled={isProcessing}
-            className="flex-1 max-w-[200px] h-11 rounded-full bg-[#0095F6] hover:bg-[#1877F2] active:bg-[#0081D6] text-white text-[14px] font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            className="ig-btn-primary px-7 h-11 text-sm font-bold flex items-center gap-2 rounded-md active:scale-95 transition-all cursor-pointer"
           >
             {isProcessing ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Preparing...</span>
+                <span>Preparing Payment...</span>
               </>
             ) : (
               <>
