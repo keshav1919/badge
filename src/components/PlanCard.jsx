@@ -82,7 +82,7 @@ export const PlanCard = () => {
 
   return (
     <>
-      <div className="w-full max-w-[420px] mx-auto bg-white rounded-lg border border-[#DBDBDB] shadow-xs overflow-hidden">
+      <div className="w-full max-w-[420px] mx-auto bg-white rounded-lg border border-[#DBDBDB] overflow-hidden">
         {/* Meta Accounts Center Header Banner */}
         <div className="p-3.5 border-b border-[#EFEFEF] space-y-1">
           <div className="flex items-center gap-2 mb-1">
@@ -101,7 +101,7 @@ export const PlanCard = () => {
 
         {/* Profile Selector Tile (Exact Meta style) */}
         <div className="p-3.5 bg-[#FAFAFA] border-b border-[#EFEFEF]">
-          <div className="bg-white rounded-lg border border-[#DBDBDB] p-3 flex items-center justify-between shadow-2xs">
+          <div className="bg-white rounded-lg border border-[#DBDBDB] p-3 flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-11 h-11 rounded-full p-[2px] ig-story-gradient shrink-0">
                 <div className="w-full h-full rounded-full bg-white p-[1.5px]">
@@ -187,7 +187,7 @@ export const PlanCard = () => {
       </div>
 
       {/* Permanently Fixed Footer Bottom Bar with Pay Button */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#DBDBDB] p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.12)]">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#DBDBDB] p-3">
         <div className="max-w-[420px] mx-auto flex items-center justify-between gap-3">
           <div>
             <div className="text-[10px] uppercase font-bold text-[#737373] tracking-wide">
@@ -202,7 +202,7 @@ export const PlanCard = () => {
             type="button"
             onClick={handleDirectPay}
             disabled={isProcessing}
-            className="ig-btn-primary px-7 h-11 text-sm font-bold flex items-center gap-2 rounded-md shadow-xs active:scale-95 transition-all cursor-pointer"
+            className="ig-btn-primary px-7 h-11 text-sm font-bold flex items-center gap-2 rounded-md active:scale-95 transition-all cursor-pointer"
           >
             {isProcessing ? (
               <>

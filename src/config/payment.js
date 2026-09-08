@@ -17,7 +17,7 @@
 
 export const PAYMENT_CONFIG = {
   // Main Subscription Price in INR
-  amount: 1,
+  amount: 30,
   currency: 'INR',
   currencySymbol: '₹',
   billingPeriod: 'year',

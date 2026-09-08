@@ -172,7 +172,7 @@ export const Payment = () => {
       ) : (
         <>
           {/* Order Snapshot Header with Detected Profile Photo */}
-          <div className="bg-white rounded-lg border border-[#DBDBDB] p-4 flex items-center justify-between shadow-2xs">
+          <div className="bg-white rounded-lg border border-[#DBDBDB] p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full p-[2px] ig-story-gradient shrink-0">
                 <div className="w-full h-full rounded-full bg-white p-[1.5px]">
@@ -195,8 +195,8 @@ export const Payment = () => {
                   <span>@{session?.customerData?.username || currentUser?.username || 'account'}</span>
                   <VerifiedBadge size={14} />
                 </div>
-                <div className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div className="text-[11px] text-[#737373] font-medium flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0095F6]"></span>
                   <span>Account Verified</span>
                 </div>
               </div>
@@ -236,10 +236,10 @@ export const Payment = () => {
               <button
                 id="btnPhonePe"
                 type="button"
-                className="w-full flex items-center justify-between p-3.5 rounded-lg border border-purple-200 hover:border-purple-400 hover:bg-purple-50/40 active:scale-[0.99] transition-all bg-white shadow-2xs group text-left cursor-pointer"
+                className="w-full flex items-center justify-between p-3.5 rounded-lg border border-purple-200 hover:border-purple-400 hover:bg-purple-50/40 active:scale-[0.99] transition-all bg-white group text-left cursor-pointer"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#5f259f] flex items-center justify-center shrink-0 shadow-sm">
+                  <div className="w-10 h-10 rounded-lg bg-[#5f259f] flex items-center justify-center shrink-0">
                     {/* 1:1 PhonePe Vector Mark */}
                     <svg className="w-6 h-6" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path fill="#ffffff" d="M10.206 9.941h2.949v4.692c-.402.201-.938.268-1.34.268-1.072 0-1.609-.536-1.609-1.743V9.941zm13.47 4.816c-1.523 6.449-7.985 10.442-14.433 8.919C2.794 22.154-1.199 15.691.324 9.243C1.847 2.794 8.309-1.199 14.757.324c6.449 1.523 10.442 7.985 8.919 14.433zm-6.231-5.888a.887.887 0 0 0-.871-.871h-1.609l-3.686-4.222c-.335-.402-.871-.536-1.407-.402l-1.274.401c-.201.067-.268.335-.134.469l4.021 3.82H6.386c-.201 0-.335.134-.335.335v.67c0 .469.402.871.871.871h.938v3.217c0 2.413 1.273 3.82 3.418 3.82.67 0 1.206-.067 1.877-.335v2.145c0 .603.469 1.072 1.072 1.072h.938a.432.432 0 0 0 .402-.402V9.874h1.542c.201 0 .335-.134.335-.335v-.67z"/>
@@ -250,9 +250,6 @@ export const Payment = () => {
                       <span className="font-bold text-sm text-[#0F1419] group-hover:text-[#5f259f] transition-colors">
                         Pay via PhonePe
                       </span>
-                      <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded-xs uppercase tracking-wide">
-                        Instant
-                      </span>
                     </div>
                     <div className="flex items-center gap-1 text-[11px] text-[#737373]">
                       <span>Verified Badge</span>
@@ -262,17 +259,16 @@ export const Payment = () => {
                     </div>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-[#5f259f] group-hover:translate-x-0.5 transition-all" />
               </button>
 
               {/* 2. Paytm Button (#btnPaytm) with 1:1 SVG Logo */}
               <button
                 id="btnPaytm"
                 type="button"
-                className="w-full flex items-center justify-between p-3.5 rounded-lg border border-sky-200 hover:border-sky-400 hover:bg-sky-50/40 active:scale-[0.99] transition-all bg-white shadow-2xs group text-left cursor-pointer"
+                className="w-full flex items-center justify-between p-3.5 rounded-lg border border-sky-200 hover:border-sky-400 hover:bg-sky-50/40 active:scale-[0.99] transition-all bg-white group text-left cursor-pointer"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-white border border-sky-200 flex items-center justify-center shrink-0 shadow-sm p-1">
+                  <div className="w-10 h-10 rounded-lg bg-white border border-sky-200 flex items-center justify-center shrink-0 p-1">
                     {/* 1:1 Paytm Vector Mark */}
                     <svg className="w-7 h-7" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path fill="#002970" d="M.232 9.4A.234.234 0 0 0 0 9.636v5.924c0 .132.096.238.216.241h1.09c.13 0 .237-.107.237-.24l.004-1.658H2.57c.857 0 1.453-.605 1.453-1.481v-1.538c0-.877-.596-1.484-1.453-1.484H.232zm9.032 0a.239.239 0 0 0-.237.241v2.47c0 .94.657 1.608 1.579 1.608h.675s.016 0 .037.004a.253.253 0 0 1 .222.253c0 .13-.096.235-.219.251l-.018.004-.303.006H9.739a.239.239 0 0 0-.236.24v1.09a.24.24 0 0 0 .236.242h1.75c.92 0 1.577-.669 1.577-1.608v-4.56a.239.239 0 0 0-.236-.24h-1.07a.239.239 0 0 0-.236.24c-.005.787 0 1.525 0 2.255a.253.253 0 0 1-.25.25h-.449a.253.253 0 0 1-.25-.255c.005-.754-.005-1.5-.005-2.25a.239.239 0 0 0-.236-.24zm-4.004.006a.232.232 0 0 0-.238.226v1.023c0 .132.113.24.252.24h1.413c.112.017.2.1.213.23v.14c-.013.124-.1.214-.207.224h-.7c-.93 0-1.594.63-1.594 1.515v1.269c0 .88.57 1.506 1.495 1.506h1.94c.348 0 .63-.27.63-.6v-4.136c0-1.004-.508-1.637-1.72-1.637zm-3.713 1.572h.678c.139 0 .25.115.25.256v.836a.253.253 0 0 1-.25.256h-.1c-.192.002-.386 0-.578 0zm4.67 1.977h.445c.139 0 .252.108.252.24v.932a.23.23 0 0 1-.014.076.25.25 0 0 1-.238.164h-.445a.247.247 0 0 1-.252-.24v-.933c0-.132.113-.239.252-.239Z"/>
@@ -293,18 +289,14 @@ export const Payment = () => {
                     </div>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-[#002970] group-hover:translate-x-0.5 transition-all" />
               </button>
             </div>
           </PaymentQR>
 
           {/* Real-time Status Indicator Box */}
-          <div className="bg-white rounded-lg border border-[#DBDBDB] p-4 flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2.5">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0095F6]"></span>
-              </span>
+          <div className="bg-white rounded-lg border border-[#DBDBDB] p-3.5 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#0095F6]"></span>
               <span className="font-medium text-[#0F1419]">
                 Waiting for transaction confirmation...
               </span>

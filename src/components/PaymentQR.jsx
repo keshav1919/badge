@@ -38,7 +38,7 @@ export const PaymentQR = ({
   }, [upiUri, isExpired]);
 
   return (
-    <div className="flex flex-col items-center text-center p-5 bg-white rounded-lg border border-[#DBDBDB] shadow-xs">
+    <div className="flex flex-col items-center text-center p-5 bg-white rounded-lg border border-[#DBDBDB]">
       {/* QR Code Frame (No Dotted Border) */}
       <div className="relative p-2 bg-white flex items-center justify-center min-w-[220px] min-h-[220px]">
         {/* Loading Skeleton */}
@@ -51,7 +51,7 @@ export const PaymentQR = ({
         {/* Real Canvas QR */}
         <canvas
           ref={canvasRef}
-          className={`rounded-sm shadow-xs transition-opacity duration-300 ${
+          className={`rounded-sm transition-opacity duration-300 ${
             isExpired ? 'opacity-10 blur-xs pointer-events-none' : 'opacity-100'
           }`}
         />
@@ -70,7 +70,7 @@ export const PaymentQR = ({
             </div>
             <button
               onClick={onRegenerate}
-              className="inline-flex items-center gap-1.5 bg-[#0095F6] hover:bg-[#0081d6] active:scale-95 text-white text-xs font-bold px-4 py-2 rounded-sm shadow-xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-[#0095F6] hover:bg-[#0081d6] active:scale-95 text-white text-xs font-bold px-4 py-2 rounded-sm transition-all cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Generate New QR</span>

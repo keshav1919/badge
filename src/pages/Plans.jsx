@@ -40,9 +40,9 @@ export const Plans = () => {
       </div>
 
       {/* What We Provide */}
-      <div className="bg-white rounded-lg border border-[#DBDBDB] p-4 shadow-2xs space-y-3">
+      <div className="bg-white rounded-lg border border-[#DBDBDB] p-4 space-y-3">
         <h4 className="font-bold text-sm text-[#0F1419] flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+          <div className="w-5 h-5 rounded-full bg-blue-50 flex items-center justify-center text-[#0095F6]">
             <Check className="w-3.5 h-3.5 stroke-[3]" />
           </div>
           <span>What We Provide</span>
@@ -50,7 +50,7 @@ export const Plans = () => {
         <ul className="space-y-2 text-xs text-neutral-700">
           {plan.whatIncluded.map((item, idx) => (
             <li key={idx} className="flex items-start gap-2">
-              <span className="text-emerald-600 font-bold">•</span>
+              <span className="text-[#0095F6] font-bold">•</span>
               <span>{item}</span>
             </li>
           ))}
