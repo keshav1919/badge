@@ -38,25 +38,25 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
 
   return (
     <div className="w-full max-w-[420px] mx-auto mb-4">
-      <div className="bg-black text-[#f5f5f5] rounded-lg border border-neutral-800/80 shadow-xl overflow-hidden p-2.5 relative">
+      <div className="bg-white text-[#262626] rounded-xl border border-[#DBDBDB] shadow-sm overflow-hidden p-3 relative">
         <header
           className="
             mx-auto
             grid
             w-full
-            grid-cols-[115px_1fr]
+            grid-cols-[105px_1fr]
             overflow-visible
             text-[14px]
             leading-[18px]
-            pt-2
+            pt-1
           "
         >
           {/* Profile Image Section */}
           <section
             className="
               flex
-              h-[105px]
-              w-[115px]
+              h-[100px]
+              w-[105px]
               items-center
               justify-center
             "
@@ -65,52 +65,42 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
               className="
                 relative
                 block
-                h-24
-                w-24
+                h-20
+                w-20
                 overflow-hidden
                 rounded-full
-                bg-[#25292e]
-                ring-2
-                ring-[#0095F6]/40
+                p-[2px]
+                ig-story-gradient
               "
               aria-label={`${user.username} profile`}
             >
-              {avatarSrc ? (
-                <img
-                  src={avatarSrc}
-                  alt={`${user.username}'s detected Instagram profile picture`}
-                  referrerPolicy="no-referrer"
-                  onError={() => {
-                    if (!useProxy && user.rawProfilePic) {
-                      setUseProxy(true);
-                    } else {
-                      setImgFailed(true);
-                    }
-                  }}
-                  className="
-                    block
-                    h-24
-                    w-24
-                    rounded-full
-                    object-cover
-                  "
-                />
-              ) : (
-                <div className="w-full h-full rounded-full bg-gradient-to-tr from-neutral-800 to-neutral-700 flex items-center justify-center text-white text-2xl font-bold">
-                  {(user.fullName || user.username || 'U').charAt(0).toUpperCase()}
-                </div>
-              )}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  inset-0
-                  rounded-full
-                  border
-                  border-white/10
-                "
-              ></span>
+              <div className="w-full h-full rounded-full bg-white p-[1.5px] overflow-hidden">
+                {avatarSrc ? (
+                  <img
+                    src={avatarSrc}
+                    alt={`${user.username}'s detected Instagram profile picture`}
+                    referrerPolicy="no-referrer"
+                    onError={() => {
+                      if (!useProxy && user.rawProfilePic) {
+                        setUseProxy(true);
+                      } else {
+                        setImgFailed(true);
+                      }
+                    }}
+                    className="
+                      block
+                      h-full
+                      w-full
+                      rounded-full
+                      object-cover
+                    "
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-[#262626] flex items-center justify-center text-white text-xl font-bold">
+                    {(user.fullName || user.username || 'U').charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
             </div>
           </section>
 
@@ -118,10 +108,10 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
           <section
             className="
               flex
-              min-h-[110px]
+              min-h-[100px]
               flex-col
               justify-center
-              pr-2.5
+              pr-1
             "
           >
             <div
@@ -129,7 +119,7 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
                 flex
                 flex-col
                 items-start
-                gap-1.5
+                gap-1
                 overflow-hidden
               "
             >
@@ -139,15 +129,14 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
                   flex
                   h-8
                   items-center
-                  justify-start
-                  gap-2
+                  justify-between
                   w-full
                 "
               >
                 <div
                   className="
                     flex
-                    max-w-[200px]
+                    max-w-[190px]
                     items-center
                     gap-1.5
                     overflow-hidden
@@ -160,17 +149,17 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
                       overflow-hidden
                       text-ellipsis
                       whitespace-nowrap
-                      text-[19px]
+                      text-[18px]
                       font-bold
                       leading-[22px]
-                      text-white
+                      text-[#262626]
                     "
                     title={user.username}
                   >
                     {user.username}
                   </h1>
                   {user.isPrivate && (
-                    <span title="Private Account" className="text-neutral-400">
+                    <span title="Private Account" className="text-[#737373]">
                       <Lock className="w-3.5 h-3.5" />
                     </span>
                   )}
@@ -188,13 +177,13 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
                       w-7
                       items-center
                       justify-center
-                      rounded-sm
+                      rounded-full
                       p-1
-                      text-neutral-400
-                      hover:text-white
-                      hover:bg-white/10
+                      text-[#737373]
+                      hover:text-[#262626]
+                      hover:bg-black/5
                       transition-colors
-                      ml-auto
+                      cursor-pointer
                     "
                   >
                     <svg
@@ -212,46 +201,47 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
               </div>
 
               {/* Display Name */}
-              <div
-                className="
-                  flex
-                  items-center
-                  justify-start
-                "
-              >
-                <span className="block text-[14px] leading-[18px] text-neutral-300 font-medium">
-                  {user.fullName || user.username}
-                </span>
-              </div>
+              {user.fullName && (
+                <div
+                  className="
+                    flex
+                    items-center
+                    justify-start
+                  "
+                >
+                  <span className="block text-[13.5px] leading-[18px] text-[#262626] font-semibold">
+                    {user.fullName}
+                  </span>
+                </div>
+              )}
 
               {/* Followers / Following */}
               <div
                 className="
                   flex
-                  h-full
                   items-center
                   justify-start
-                  text-[13px]
+                  text-[12.5px]
                   leading-[18px]
-                  text-neutral-300
+                  text-[#737373]
                   pt-0.5
                 "
               >
-                <span className="inline">
-                  <span className="font-semibold text-white">{user.followers || '0'}</span> followers
+                <span>
+                  <span className="font-semibold text-[#262626]">{user.followers || '0'}</span> followers
                 </span>
 
-                <span className="mx-2 text-neutral-600">•</span>
+                <span className="mx-2 text-[#DBDBDB]">•</span>
 
-                <span className="inline">
-                  <span className="font-semibold text-white">{user.following || '0'}</span> following
+                <span>
+                  <span className="font-semibold text-[#262626]">{user.following || '0'}</span> following
                 </span>
 
                 {user.posts && user.posts !== '0' && (
                   <>
-                    <span className="mx-2 text-neutral-600">•</span>
-                    <span className="inline">
-                      <span className="font-semibold text-white">{user.posts}</span> posts
+                    <span className="mx-2 text-[#DBDBDB]">•</span>
+                    <span>
+                      <span className="font-semibold text-[#262626]">{user.posts}</span> posts
                     </span>
                   </>
                 )}
@@ -261,11 +251,11 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
         </header>
 
         {/* Account status note footer */}
-        <div className="mt-2 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-neutral-400 px-1">
+        <div className="mt-2.5 pt-2.5 border-t border-[#EFEFEF] flex items-center justify-between text-[11px] text-[#737373] px-1">
           <span className="flex items-center gap-1.5">
             {user.isPrivate ? (
               <>
-                <Lock className="w-3.5 h-3.5 text-neutral-400" />
+                <Lock className="w-3.5 h-3.5 text-[#737373]" />
                 <span>Private Profile Verified</span>
               </>
             ) : (
@@ -278,9 +268,9 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
           {onChangeUsername && (
             <button
               onClick={onChangeUsername}
-              className="text-[#0095F6] hover:underline font-semibold"
+              className="text-[#0095F6] hover:text-[#1877F2] hover:underline font-semibold cursor-pointer"
             >
-              Change
+              Change account
             </button>
           )}
         </div>
