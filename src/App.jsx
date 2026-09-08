@@ -1,0 +1,73 @@
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import Header from './components/Header';
+import BottomNav from './components/BottomNav';
+import Footer from './components/Footer';
+
+// Pages
+import Home from './pages/Home';
+import Plans from './pages/Plans';
+import Checkout from './pages/Checkout';
+import Payment from './pages/Payment';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailed from './pages/PaymentFailed';
+import Orders from './pages/Orders';
+import OrderDetails from './pages/OrderDetails';
+import FAQ from './pages/FAQ';
+import Support from './pages/Support';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import RefundPolicy from './pages/RefundPolicy';
+
+// Scroll to top helper on route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
+export const App = () => {
+  return (
+    <div className="min-h-screen bg-[#0d0e11] flex justify-center items-start selection:bg-[#0095F6] selection:text-white">
+      {/* 420px Mobile Container */}
+      <div className="w-full max-w-[420px] min-h-screen flex flex-col bg-[#FAFAFA] text-[#0F1419] shadow-2xl relative overflow-x-hidden border-x border-[#DBDBDB]/50">
+        <ScrollToTop />
+
+        {/* Mobile Top Header */}
+        <Header />
+
+        {/* Content Area */}
+        <main className="flex-1 pb-16">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/plans" element={<Plans />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-failed" element={<PaymentFailed />} />
+            <Route path="/orders" element={<Navigate to="/" replace />} />
+            <Route path="/order" element={<Navigate to="/" replace />} />
+            <Route path="/order/:id" element={<Navigate to="/" replace />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
+            {/* Catch-all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+
+        {/* Mobile Fixed Bottom Navigation */}
+        <BottomNav />
+
+        {/* Mobile Footer */}
+        <Footer />
+      </div>
+    </div>
+  );
+};
+
+export default App;
