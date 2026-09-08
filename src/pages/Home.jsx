@@ -108,7 +108,7 @@ export const Home = () => {
 
         {/* Active Instagram Profile Continuation (Flat native Instagram style) */}
         {currentUser && (
-          <div className="mt-5 p-3.5 rounded-2xl bg-white/70 backdrop-blur-md border border-black/[0.08] flex items-center justify-between">
+          <div className="mt-5 p-3.5 rounded-2xl bg-white/85 border border-black/[0.08] flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-full p-[1.5px] ig-story-gradient shrink-0">
                 <div className="w-full h-full rounded-full bg-white p-[1px] overflow-hidden">
@@ -170,7 +170,7 @@ export const Home = () => {
             return (
               <div
                 key={idx}
-                className="bg-white/70 backdrop-blur-md rounded-2xl border border-black/[0.08] p-4 text-left flex items-start gap-3.5"
+                className="bg-white/85 rounded-2xl border border-black/[0.08] p-4 text-left flex items-start gap-3.5"
               >
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${p.badgeColor}`}>
                   <Icon className="w-5 h-5 stroke-[2]" />
@@ -193,7 +193,7 @@ export const Home = () => {
       {/* 3. FAST ONBOARDING SUMMARY                               */}
       {/* ======================================================== */}
       <section className="px-6 py-4">
-        <div className="p-5 rounded-3xl bg-white/70 backdrop-blur-md border border-black/[0.08] text-center space-y-3">
+        <div className="p-5 rounded-3xl bg-white/85 border border-black/[0.08] text-center space-y-3">
           <div className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50/70 text-[#0095F6] mb-1">
             <VerifiedBadge size={26} color="#3897F0" />
           </div>
@@ -231,7 +231,7 @@ export const Home = () => {
           {FAQ_ITEMS.slice(0, 3).map((item, idx) => (
             <div
               key={idx}
-              className="bg-white/70 backdrop-blur-md rounded-2xl border border-black/[0.08] p-4 text-left space-y-1.5"
+              className="bg-white/85 rounded-2xl border border-black/[0.08] p-4 text-left space-y-1.5"
             >
               <h3 className="font-bold text-[13px] text-[#1c1e21] flex items-start gap-2">
                 <HelpCircle className="w-4 h-4 text-[#0095F6] shrink-0 mt-0.5" />
