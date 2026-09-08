@@ -84,14 +84,14 @@ export const PlanCard = () => {
     <>
       <div className="w-full max-w-[420px] mx-auto bg-white rounded-lg border border-[#DBDBDB] overflow-hidden">
         {/* Meta Accounts Center Header Banner */}
-        <div className="p-3.5 border-b border-[#EFEFEF] space-y-1">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="p-4 border-b border-[#EFEFEF]">
+          <div className="flex items-center gap-2 mb-3">
             <MetaLogo size={18} />
             <span className="text-xs font-semibold text-[#737373] tracking-tight">
               Accounts Center
             </span>
           </div>
-          <h2 className="text-lg font-bold text-[#262626] tracking-tight leading-snug">
+          <h2 className="text-lg font-bold text-[#262626] tracking-tight leading-snug mb-1.5">
             Set up verification assistance on Instagram
           </h2>
           <p className="text-xs text-[#737373] leading-relaxed">
