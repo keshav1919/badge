@@ -9,7 +9,7 @@ export const BottomNav = () => {
     { label: 'Home', path: '/', icon: Home },
     { label: 'Plans', path: '/plans', icon: Search },
     { label: 'FAQ', path: '/faq', icon: HelpCircle },
-    { label: 'Support', path: '/support', icon: User },
+    { label: 'Profile', path: '/support', icon: User },
   ];
 
   return (

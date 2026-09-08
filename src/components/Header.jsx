@@ -94,7 +94,7 @@ export const Header = () => {
               onClick={() => setIsMenuOpen(false)}
               className="block py-2 text-[15px] font-semibold text-[#1c1e21] hover:text-[#0064E0]"
             >
-              Subscription Plans (₹1/yr)
+              Subscription Plan (₹30/yr)
             </Link>
             <Link
               to="/faq"
@@ -108,7 +108,7 @@ export const Header = () => {
               onClick={() => setIsMenuOpen(false)}
               className="block py-2 text-[15px] font-semibold text-[#1c1e21] hover:text-[#0064E0]"
             >
-              Help & Support
+              Instagram Account Profile
             </Link>
           </div>
         )}
