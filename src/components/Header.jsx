@@ -1,87 +1,144 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
-import VerifiedBadge from './VerifiedBadge';
+import { ChevronLeft, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
+import MetaLogo from './MetaLogo';
 import { useUser } from '../context/UserContext';
+import { UsernameModal } from './UsernameModal';
 
 export const Header = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const { currentUser } = useUser();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
   const userAvatarSrc = currentUser?.avatarUrl || currentUser?.profilePic;
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b border-[#DBDBDB] select-none">
-      <div className="w-full px-3.5 h-12 flex items-center justify-between">
-        {/* Left: Instagram Branding + Back Button */}
-        <div className="flex items-center gap-1.5">
-          {!isHome && (
+    <>
+      <header className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-md border-b border-black/[0.06] select-none transition-all">
+        <div className="w-full px-4 h-13 flex items-center justify-between">
+          {/* Left: Hamburger & Meta Logo (1:1 with Image 1) */}
+          <div className="flex items-center gap-3">
+            {!isHome ? (
+              <Link
+                to="/"
+                className="text-[#1c1e21] p-1 -ml-1.5 active:scale-90 transition-transform"
+                aria-label="Back to home"
+              >
+                <ChevronLeft className="w-6 h-6 stroke-[2]" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-[#1c1e21] p-1 -ml-1.5 hover:bg-black/5 rounded-full active:scale-95 transition-all cursor-pointer"
+                aria-label="Toggle Navigation Menu"
+              >
+                {isMenuOpen ? <X className="w-6 h-6 stroke-[2]" /> : <Menu className="w-6 h-6 stroke-[2]" />}
+              </button>
+            )}
+
+            {/* Meta Brand Wordmark */}
+            <Link to="/" className="flex items-center gap-1.5 group">
+              <MetaLogo size={28} />
+              <span
+                className="text-[19px] font-semibold tracking-tight text-[#1c1e21]"
+                style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+              >
+                Meta
+              </span>
+            </Link>
+          </div>
+
+          {/* Right: Search, Shopping Bag, User Account (1:1 with Image 1) */}
+          <div className="flex items-center gap-3 text-[#1c1e21]">
+            <button
+              type="button"
+              onClick={() => setIsUserModalOpen(true)}
+              className="p-1 hover:bg-black/5 rounded-full active:scale-90 transition-all cursor-pointer"
+              aria-label="Search username"
+              title="Search username"
+            >
+              <Search className="w-5 h-5 stroke-[2]" />
+            </button>
+
+            <Link
+              to="/plans"
+              className="p-1 hover:bg-black/5 rounded-full active:scale-90 transition-all cursor-pointer relative"
+              aria-label="View verification plan"
+              title="View plan"
+            >
+              <ShoppingBag className="w-5 h-5 stroke-[2]" />
+              <span className="absolute 0.5 top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#0064E0]"></span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setIsUserModalOpen(true)}
+              className="p-0.5 hover:bg-black/5 rounded-full active:scale-90 transition-all cursor-pointer"
+              aria-label="Account Profile"
+              title={currentUser?.username ? `@${currentUser.username}` : 'Account'}
+            >
+              {userAvatarSrc ? (
+                <div className="w-6 h-6 rounded-full ring-1.5 ring-[#0064E0] overflow-hidden">
+                  <img
+                    src={userAvatarSrc}
+                    alt={currentUser.username}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="p-0.5">
+                  <User className="w-5 h-5 stroke-[2]" />
+                </div>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Slide-down mobile drawer menu */}
+        {isMenuOpen && isHome && (
+          <div className="bg-white/95 backdrop-blur-xl border-b border-neutral-200 px-5 py-4 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
             <Link
               to="/"
-              className="text-[#262626] p-1 -ml-1.5 active:scale-90 transition-transform"
-              aria-label="Back to home"
+              onClick={() => setIsMenuOpen(false)}
+              className="block py-2 text-[15px] font-semibold text-[#1c1e21] hover:text-[#0064E0]"
             >
-              <ChevronLeft className="w-6 h-6 stroke-[2]" />
+              Meta Verified Overview
             </Link>
-          )}
-
-          {/* Instagram Brand Wordmark */}
-          <Link to="/" className="flex items-center gap-1 group shrink-0">
-            <span
-              className="text-xl font-bold tracking-tight text-[#262626]"
-              style={{ fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif" }}
-            >
-              Instagram
-            </span>
-            <VerifiedBadge size={14} />
-          </Link>
-        </div>
-
-        {/* Right: Detected Profile Photo DP with Story Ring */}
-        <div className="flex items-center gap-2">
-          {currentUser ? (
             <Link
               to="/plans"
-              className="flex items-center gap-1.5 pl-1.5 py-1 rounded-sm active:opacity-75 transition-opacity"
-              title={`Detected: @${currentUser.username}`}
+              onClick={() => setIsMenuOpen(false)}
+              className="block py-2 text-[15px] font-semibold text-[#1c1e21] hover:text-[#0064E0]"
             >
-              <div className="relative shrink-0">
-                <div className="w-7 h-7 rounded-full p-[1.5px] ig-story-gradient">
-                  <div className="w-full h-full rounded-full bg-white p-[1px]">
-                    {userAvatarSrc ? (
-                      <img
-                        src={userAvatarSrc}
-                        alt={currentUser.username}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full rounded-full bg-[#262626] text-white flex items-center justify-center text-[10px] font-bold">
-                        {currentUser.username?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col text-left leading-none max-w-[90px]">
-                <span className="font-bold text-[11px] text-[#262626] truncate">
-                  @{currentUser.username}
-                </span>
-              </div>
+              Subscription Plans (₹1/yr)
             </Link>
-          ) : (
             <Link
-              to="/plans"
-              className="ig-btn-primary h-7 px-2.5 text-[11px] font-bold rounded-sm"
+              to="/faq"
+              onClick={() => setIsMenuOpen(false)}
+              className="block py-2 text-[15px] font-semibold text-[#1c1e21] hover:text-[#0064E0]"
             >
-              <span>Get Started</span>
+              FAQ & Requirements
             </Link>
-          )}
-        </div>
-      </div>
-    </header>
+            <Link
+              to="/support"
+              onClick={() => setIsMenuOpen(false)}
+              className="block py-2 text-[15px] font-semibold text-[#1c1e21] hover:text-[#0064E0]"
+            >
+              Help & Support
+            </Link>
+          </div>
+        )}
+      </header>
+
+      <UsernameModal
+        isOpen={isUserModalOpen}
+        onClose={() => setIsUserModalOpen(false)}
+        redirectPath="/plans"
+      />
+    </>
   );
 };
 

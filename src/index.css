@@ -26,6 +26,47 @@
   }
 }
 
+/* Meta Verified Ethereal Mesh Gradient Background (1:1 with https://www.meta.com/en-gb/meta-verified/) */
+.meta-mesh-bg {
+  background-color: #f7fafc;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(255, 225, 233, 0.75) 0px, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(204, 234, 255, 0.8) 0px, transparent 50%),
+    radial-gradient(at 50% 25%, rgba(224, 242, 254, 0.65) 0px, transparent 65%),
+    radial-gradient(at 0% 60%, rgba(240, 232, 255, 0.55) 0px, transparent 50%),
+    radial-gradient(at 100% 90%, rgba(212, 250, 230, 0.7) 0px, transparent 55%),
+    radial-gradient(at 40% 95%, rgba(224, 242, 254, 0.5) 0px, transparent 50%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Meta Pill Action Buttons */
+.meta-btn-pill {
+  background-color: #2b5fe6;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.25;
+  padding: 13px 20px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+.meta-btn-pill:hover {
+  background-color: #2352cb;
+}
+.meta-btn-pill:active {
+  background-color: #1c44ac;
+  transform: scale(0.99);
+}
+
 /* Instagram Story Ring Gradients */
 .ig-story-gradient {
   background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);

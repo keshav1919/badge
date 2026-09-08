@@ -30,9 +30,9 @@ const ScrollToTop = () => {
 
 export const App = () => {
   return (
-    <div className="min-h-screen bg-[#0d0e11] flex justify-center items-start selection:bg-[#0095F6] selection:text-white">
+    <div className="min-h-screen meta-mesh-bg flex justify-center items-start selection:bg-[#0064E0] selection:text-white">
       {/* 420px Mobile Container */}
-      <div className="w-full max-w-[420px] min-h-screen flex flex-col bg-[#FAFAFA] text-[#0F1419] shadow-2xl relative overflow-x-hidden border-x border-[#DBDBDB]/50">
+      <div className="w-full max-w-[420px] min-h-screen flex flex-col meta-mesh-bg text-[#1c1e21] shadow-xl relative overflow-x-hidden border-x border-black/[0.06]">
         <ScrollToTop />
 
         {/* Mobile Top Header */}

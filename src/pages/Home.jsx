@@ -1,322 +1,208 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ArrowRight,
   ShieldCheck,
-  Search,
-  Zap,
-  Activity,
-  Layers,
-  FileCheck,
-  CreditCard,
-  Send,
-  Lock,
-  Globe,
   CheckCircle2,
   ChevronRight,
   HelpCircle,
-  AtSign,
-  Loader2,
-  AlertCircle,
+  Lock,
+  Globe,
+  Sparkles,
+  ArrowRight,
+  Headphones,
+  FileCheck,
 } from 'lucide-react';
-import MetaLogo from '../components/MetaLogo';
 import VerifiedBadge from '../components/VerifiedBadge';
 import { UsernameModal } from '../components/UsernameModal';
 import { FAQ_ITEMS } from '../data/faq';
-import { PAYMENT_CONFIG } from '../config/payment';
 import { useUser } from '../context/UserContext';
+
+// Floating Meta Assistant Petal Icon (from Image 2)
+const MetaAssistantIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="3" fill="#7C3AED" />
+    <ellipse cx="12" cy="5" rx="1.8" ry="2.8" fill="#8B5CF6" />
+    <ellipse cx="12" cy="19" rx="1.8" ry="2.8" fill="#8B5CF6" />
+    <ellipse cx="5" cy="12" rx="2.8" ry="1.8" fill="#7C3AED" />
+    <ellipse cx="19" cy="12" rx="2.8" ry="1.8" fill="#7C3AED" />
+    <ellipse cx="7.05" cy="7.05" rx="1.8" ry="2.8" transform="rotate(-45 7.05 7.05)" fill="#6D28D9" />
+    <ellipse cx="16.95" cy="16.95" rx="1.8" ry="2.8" transform="rotate(-45 16.95 16.95)" fill="#6D28D9" />
+    <ellipse cx="16.95" cy="7.05" rx="1.8" ry="2.8" transform="rotate(45 16.95 7.05)" fill="#9333EA" />
+    <ellipse cx="7.05" cy="19" rx="1.8" ry="2.8" transform="rotate(45 7.05 19)" fill="#9333EA" />
+  </svg>
+);
 
 export const Home = () => {
   const navigate = useNavigate();
-  const { fetchUser, isLoading, currentUser } = useUser();
-
+  const { currentUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [heroUsername, setHeroUsername] = useState('');
-  const [heroError, setHeroError] = useState('');
+  const [activePlatform, setActivePlatform] = useState('instagram');
 
-  const handleHeroSubmit = async (e) => {
-    e.preventDefault();
-    const clean = heroUsername.trim().replace(/^@/, '');
-    if (!clean) {
-      setHeroError('Please enter your Instagram username');
-      return;
-    }
-
-    setHeroError('');
-    const result = await fetchUser(clean);
-    if (result.success) {
-      navigate('/plans');
-    } else {
-      setHeroError(result.error || 'Account not found on Instagram. Please enter a valid username.');
-    }
+  const handleSubscribeClick = (platform) => {
+    setActivePlatform(platform);
+    setIsModalOpen(true);
   };
 
-  const benefits = [
+  const metaPillars = [
     {
-      icon: Search,
-      title: 'Verification Guidance',
-      description: 'Step-by-step submission checklist tailored to Instagram standards.',
-      color: 'text-[#0095F6] bg-blue-50',
+      icon: ShieldCheck,
+      title: 'A verified badge',
+      description: 'Your audience can trust that you are the authentic creator or business behind your account.',
+      badgeColor: 'text-[#2851a3] bg-blue-50',
     },
     {
-      icon: FileCheck,
-      title: 'Profile Audit',
-      description: 'Comprehensive review of your bio, photo, and public presence.',
-      color: 'text-purple-600 bg-purple-50',
+      icon: Lock,
+      title: 'Proactive account protection',
+      description: 'Continuous monitoring helps defend your identity against impersonators targeting your profile.',
+      badgeColor: 'text-purple-600 bg-purple-50',
     },
     {
-      icon: Zap,
-      title: 'Priority Support',
-      description: 'Direct WhatsApp and email assistance for active subscribers.',
-      color: 'text-amber-600 bg-amber-50',
+      icon: Headphones,
+      title: 'Direct account support',
+      description: 'Get help with real account issues from an expert support specialist when you need it.',
+      badgeColor: 'text-emerald-600 bg-emerald-50',
     },
     {
-      icon: Activity,
-      title: 'Instant Activation',
-      description: 'Quick automated verification assistance onboarding for your account.',
-      color: 'text-emerald-600 bg-emerald-50',
-    },
-  ];
-
-  const steps = [
-    {
-      number: '01',
-      icon: Layers,
-      title: 'Enter Username',
-      description: 'Click Get Started and enter your Instagram handle for real-time audit.',
-    },
-    {
-      number: '02',
-      icon: Search,
-      title: 'Profile Photo Detection',
-      description: 'We detect your profile photo, stats, and account readiness live.',
-    },
-    {
-      number: '03',
-      icon: CreditCard,
-      title: 'Complete Payment',
-      description: 'Pay ₹1 securely via UPI (Google Pay, PhonePe, Paytm, BHIM).',
-    },
-    {
-      number: '04',
-      icon: Send,
-      title: 'Submit Application',
-      description: 'Follow personalized advisory notes to submit your verification.',
+      icon: Sparkles,
+      title: 'Exclusive features',
+      description: 'Access tailored stickers and tools across Stories and Reels to grow audience engagement.',
+      badgeColor: 'text-amber-600 bg-amber-50',
     },
   ];
 
   return (
-    <div className="w-full max-w-[420px] mx-auto px-4 py-4 space-y-6 select-none">
-      {/* Username Modal Triggered on Get Started */}
+    <div className="w-full max-w-[420px] mx-auto select-none">
+      {/* Username Modal Triggered on "Subscribe on Instagram" or "Subscribe on Facebook" */}
       <UsernameModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         redirectPath="/plans"
       />
 
-      {/* Hero Section */}
-      <section className="space-y-4">
-        {/* Official Meta Advisory Badge with SVG Logo */}
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-blue-50 border border-blue-200 text-[11px] font-bold text-[#0095F6]">
-          <MetaLogo size={14} />
-          <span>Meta Accounts Center Assistance</span>
+      {/* ======================================================== */}
+      {/* 1. HERO SECTION — EXACT 1:1 MATCH WITH IMAGE 1            */}
+      {/* ======================================================== */}
+      <section className="px-6 pt-7 pb-6 text-left">
+        {/* Large Meta Verified Blue Rosette Badge */}
+        <div className="mb-6">
+          <div className="inline-block drop-shadow-[0_8px_16px_rgba(40,81,163,0.22)] transform hover:scale-105 transition-transform duration-300">
+            <VerifiedBadge size={76} color="#2851a3" />
+          </div>
         </div>
 
-        {/* Headline & Price */}
-        <div className="space-y-1.5">
-          <h1 className="text-2xl font-black text-[#0F1419] tracking-tight leading-tight">
-            Get Verification Assistance for{' '}
-            <span className="text-[#0095F6]">
-              {PAYMENT_CONFIG.currencySymbol}{PAYMENT_CONFIG.amount}/year
-            </span>
-          </h1>
-
-          <p className="text-xs text-[#737373] leading-relaxed">
-            Audit your profile photo and readiness live from Instagram. Receive personalized guidance to prepare your account for official platform review.
-          </p>
-        </div>
-
-        {/* PRIMARY CTA: Get Started Button (Opens Username Modal) */}
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="w-full ig-btn-primary h-12 text-sm font-bold rounded-sm shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform"
+        {/* Headline (1:1 with Image 1) */}
+        <h1
+          className="text-[32px] font-bold text-[#1c1e21] tracking-tight leading-[1.16] mb-4"
+          style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
         >
-          <span>Get Started</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
+          Protect your brand with Meta Verified
+        </h1>
 
-        {/* Direct Quick Username Input Form */}
-        <div className="bg-white p-3 rounded-lg border border-[#DBDBDB] shadow-2xs space-y-2">
-          <label className="block text-[11px] font-bold text-[#0F1419]">
-            Or enter your Instagram username directly:
-          </label>
+        {/* Description Text (1:1 with Image 1) */}
+        <p
+          className="text-[15.5px] text-[#2c3138] leading-[1.48] font-normal mb-8"
+          style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+        >
+          Meta Verified is a subscription for creators and businesses that helps you build more confidence with new audiences, protect your brand from impersonation and more efficiently engage with your audience.
+        </p>
 
-          <form onSubmit={handleHeroSubmit} className="flex gap-2">
-            <div className="relative flex-1">
-              <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none">
-                <AtSign className="w-3.5 h-3.5" />
+        {/* The Two Pill Buttons (1:1 with Image 1) */}
+        <div className="space-y-3.5">
+          {/* 1. Subscribe on Facebook */}
+          <button
+            type="button"
+            onClick={() => handleSubscribeClick('facebook')}
+            className="w-full py-3.5 px-6 rounded-full bg-[#2851a3] hover:bg-[#204287] active:scale-[0.98] text-white text-[15px] font-semibold tracking-normal shadow-sm transition-all flex items-center justify-center cursor-pointer"
+          >
+            <span>Subscribe on Facebook</span>
+          </button>
+
+          {/* 2. Subscribe on Instagram (Primary Flow) */}
+          <button
+            type="button"
+            onClick={() => handleSubscribeClick('instagram')}
+            className="w-full py-3.5 px-6 rounded-full bg-[#2851a3] hover:bg-[#204287] active:scale-[0.98] text-white text-[15px] font-semibold tracking-normal shadow-sm transition-all flex items-center justify-center cursor-pointer"
+          >
+            <span>Subscribe on Instagram</span>
+          </button>
+        </div>
+
+        {/* Quick Active Profile Continuation (If user already searched/cached) */}
+        {currentUser && (
+          <div className="mt-5 p-3 rounded-2xl bg-white/85 backdrop-blur-md border border-black/[0.08] shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-full p-[1.5px] ig-story-gradient shrink-0">
+                <div className="w-full h-full rounded-full bg-white p-[1px] overflow-hidden">
+                  {currentUser.avatarUrl || currentUser.profilePic ? (
+                    <img
+                      src={currentUser.avatarUrl || currentUser.profilePic}
+                      alt={currentUser.username}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-[#2851a3] text-white flex items-center justify-center text-xs font-bold">
+                      {currentUser.username?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
               </div>
-              <input
-                type="text"
-                value={heroUsername}
-                onChange={(e) => {
-                  setHeroUsername(e.target.value);
-                  if (heroError) setHeroError('');
-                }}
-                placeholder="enter username"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck="false"
-                className={`w-full pl-8 pr-3 py-2 rounded-sm border text-xs font-medium outline-none transition-all ${
-                  heroError
-                    ? 'border-rose-400 bg-rose-50/20 text-[#0F1419]'
-                    : 'border-[#DBDBDB] bg-neutral-50/50 text-[#0F1419] focus:bg-white focus:border-[#0095F6]'
-                }`}
-              />
+
+              <div className="text-left min-w-0">
+                <div className="flex items-center gap-1 text-xs font-bold text-[#1c1e21]">
+                  <span className="truncate">@{currentUser.username}</span>
+                  <VerifiedBadge size={13} color="#2851a3" />
+                </div>
+                <div className="text-[11px] text-neutral-500 truncate flex items-center gap-1">
+                  <span>{currentUser.followers} followers</span>
+                  <span>•</span>
+                  <span>{currentUser.isPrivate ? 'Private' : 'Public'}</span>
+                </div>
+              </div>
             </div>
 
             <button
-              type="submit"
-              disabled={isLoading}
-              className="bg-[#0095F6] hover:bg-[#0081d6] active:scale-95 text-white font-bold py-2 px-3.5 rounded-sm text-xs transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer shrink-0"
+              type="button"
+              onClick={() => navigate('/plans')}
+              className="px-3.5 py-1.5 bg-[#2851a3] hover:bg-[#204287] text-white text-xs font-bold rounded-full shrink-0 flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Checking...</span>
-                </>
-              ) : (
-                <>
-                  <span>Continue</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </>
-              )}
+              <span>Continue</span>
+              <ArrowRight className="w-3 h-3" />
             </button>
-          </form>
-
-          {heroError && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-700 text-[11px] p-2 rounded-sm flex items-center gap-1.5">
-              <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-              <span>{heroError}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Live Detected Instagram Account Card (If Present) */}
-        {currentUser && (
-          <div className="bg-white p-3.5 rounded-lg border border-neutral-200 shadow-xs space-y-2.5">
-            <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-600 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                Detected Instagram Profile
-              </span>
-              <span className="text-[10px] text-neutral-500 flex items-center gap-1">
-                {currentUser.isPrivate ? (
-                  <>
-                    <Lock className="w-3 h-3 text-neutral-400" />
-                    <span>Private</span>
-                  </>
-                ) : (
-                  <>
-                    <Globe className="w-3 h-3 text-[#0095F6]" />
-                    <span>Public</span>
-                  </>
-                )}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="relative shrink-0">
-                <div className="w-12 h-12 rounded-full p-[1.5px] ig-story-gradient">
-                  <div className="w-full h-full rounded-full bg-white p-[1px]">
-                    {currentUser.avatarUrl || currentUser.profilePic ? (
-                      <img
-                        src={currentUser.avatarUrl || currentUser.profilePic}
-                        alt={currentUser.username}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full rounded-full bg-[#262626] text-white flex items-center justify-center text-xs font-bold">
-                        {currentUser.username?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white" />
-              </div>
-
-              <div className="flex-1 min-w-0 text-left">
-                <div className="flex items-center gap-1 font-bold text-xs text-[#0F1419]">
-                  <span className="truncate">@{currentUser.username}</span>
-                  <VerifiedBadge size={13} />
-                </div>
-                <div className="text-[11px] text-[#737373] truncate">
-                  {currentUser.fullName || currentUser.username}
-                </div>
-                <div className="text-[10px] font-semibold text-neutral-600 mt-0.5">
-                  <span className="text-[#0F1419] font-bold">{currentUser.followers}</span> followers • <span className="text-[#0F1419] font-bold">{currentUser.following}</span> following
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => navigate('/plans')}
-                className="bg-[#0095F6] hover:bg-[#0081d6] active:scale-95 text-white font-bold py-1.5 px-3 rounded-sm text-[11px] flex items-center gap-1 shrink-0"
-              >
-                <span>View Plan</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
           </div>
         )}
-
-        {/* Trust Badges with SVG Icons */}
-        <div className="flex items-center justify-between text-[11px] text-[#737373] pt-1 px-1">
-          <div className="flex items-center gap-1">
-            <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>No Passwords</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#0095F6] shrink-0" />
-            <span>Public & Private</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-            <span>Live Audit</span>
-          </div>
-        </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="space-y-3 pt-2">
-        <div className="space-y-0.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#0095F6]">
-            Why Choose VerifyAssist
+      {/* ======================================================== */}
+      {/* 2. META VERIFIED PILLARS & BENEFITS                       */}
+      {/* ======================================================== */}
+      <section className="px-6 py-6 space-y-4">
+        <div className="space-y-1 text-left">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#2851a3]">
+            What's included
           </span>
-          <h2 className="text-lg font-extrabold text-[#0F1419] tracking-tight">
-            Account Guidance From Day One
+          <h2 className="text-xl font-bold text-[#1c1e21] tracking-tight">
+            Build trust and grow your audience
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-2.5">
-          {benefits.map((b, idx) => {
-            const Icon = b.icon;
+        <div className="space-y-3">
+          {metaPillars.map((p, idx) => {
+            const Icon = p.icon;
             return (
               <div
                 key={idx}
-                className="bg-white rounded-lg border border-[#DBDBDB] p-3 shadow-2xs space-y-1.5 flex flex-col justify-between"
+                className="bg-white/80 backdrop-blur-md rounded-2xl border border-black/[0.06] p-4 shadow-sm text-left flex items-start gap-3.5"
               >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${p.badgeColor}`}>
+                  <Icon className="w-5 h-5 stroke-[2]" />
+                </div>
                 <div>
-                  <div className={`w-8 h-8 rounded-sm flex items-center justify-center mb-1.5 ${b.color}`}>
-                    <Icon className="w-4 h-4 stroke-[2]" />
-                  </div>
-                  <h3 className="text-xs font-bold text-[#0F1419]">
-                    {b.title}
+                  <h3 className="text-[14px] font-bold text-[#1c1e21] mb-1">
+                    {p.title}
                   </h3>
-                  <p className="text-[11px] text-[#737373] leading-snug mt-0.5">
-                    {b.description}
+                  <p className="text-[12.5px] text-[#4b5563] leading-relaxed">
+                    {p.description}
                   </p>
                 </div>
               </div>
@@ -325,97 +211,87 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* 4-Step Process Section */}
-      <section className="space-y-3 pt-2">
-        <div className="space-y-0.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#0095F6]">
-            How It Works
-          </span>
-          <h2 className="text-lg font-extrabold text-[#0F1419] tracking-tight">
-            4 Steps to Prepare Your Account
-          </h2>
-        </div>
-
-        <div className="space-y-2">
-          {steps.map((s, idx) => {
-            const Icon = s.icon;
-            return (
-              <div
-                key={idx}
-                className="bg-white rounded-lg border border-[#DBDBDB] p-3 flex items-start gap-3 shadow-2xs"
-              >
-                <div className="w-7 h-7 rounded-sm bg-blue-50 text-[#0095F6] flex items-center justify-center font-mono font-bold text-xs shrink-0 mt-0.5">
-                  {s.number}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xs font-bold text-[#0F1419] flex items-center gap-1.5">
-                    <Icon className="w-3.5 h-3.5 text-[#0095F6]" />
-                    <span>{s.title}</span>
-                  </h3>
-                  <p className="text-[11px] text-[#737373] leading-snug mt-0.5">
-                    {s.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Secondary Get Started CTA Card */}
-        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50/60 border border-blue-200/80 rounded-lg space-y-2.5 text-center">
-          <h3 className="font-bold text-xs text-[#0F1419]">
-            Ready to audit your profile photo & readiness?
+      {/* ======================================================== */}
+      {/* 3. FAST ONBOARDING SUMMARY                               */}
+      {/* ======================================================== */}
+      <section className="px-6 py-4">
+        <div className="p-5 rounded-3xl bg-white/85 backdrop-blur-md border border-black/[0.07] shadow-sm text-center space-y-3">
+          <div className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 text-[#2851a3] mb-1">
+            <VerifiedBadge size={26} color="#2851a3" />
+          </div>
+          <h3 className="font-bold text-[16px] text-[#1c1e21]">
+            Ready to verify your Instagram account?
           </h3>
-          <p className="text-[11px] text-[#737373]">
-            Personalized checklist and expert audit delivered within 24 hours.
+          <p className="text-[12.5px] text-[#4b5563] max-w-xs mx-auto">
+            Detect your profile, review your account readiness, and activate your onboarding plan.
           </p>
           <button
             type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="w-full bg-[#0095F6] hover:bg-[#0081d6] active:scale-[0.98] text-white text-xs font-bold py-3 px-4 rounded-sm shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            onClick={() => handleSubscribeClick('instagram')}
+            className="w-full py-3 px-5 rounded-full bg-[#2851a3] hover:bg-[#204287] active:scale-[0.98] text-white text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <span>Get Started · {PAYMENT_CONFIG.currencySymbol}{PAYMENT_CONFIG.amount}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>Start on Instagram</span>
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </section>
 
-      {/* FAQ Snippet Section */}
-      <section className="space-y-3 pt-2">
-        <div className="space-y-0.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#0095F6]">
-            Questions & Answers
+      {/* ======================================================== */}
+      {/* 4. FREQUENTLY ASKED QUESTIONS                             */}
+      {/* ======================================================== */}
+      <section className="px-6 py-5 space-y-3">
+        <div className="space-y-1 text-left">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#2851a3]">
+            Questions?
           </span>
-          <h2 className="text-lg font-extrabold text-[#0F1419] tracking-tight">
+          <h2 className="text-xl font-bold text-[#1c1e21] tracking-tight">
             Frequently Asked
           </h2>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {FAQ_ITEMS.slice(0, 3).map((item, idx) => (
-            <div key={idx} className="bg-white rounded-lg border border-[#DBDBDB] p-3 shadow-2xs space-y-1">
-              <h3 className="font-bold text-xs text-[#0F1419] flex items-start gap-1.5">
-                <HelpCircle className="w-3.5 h-3.5 text-[#0095F6] shrink-0 mt-0.5" />
+            <div
+              key={idx}
+              className="bg-white/80 backdrop-blur-md rounded-2xl border border-black/[0.06] p-4 shadow-2xs text-left space-y-1.5"
+            >
+              <h3 className="font-bold text-[13px] text-[#1c1e21] flex items-start gap-2">
+                <HelpCircle className="w-4 h-4 text-[#2851a3] shrink-0 mt-0.5" />
                 <span>{item.question}</span>
               </h3>
-              <p className="text-[11px] text-[#737373] leading-relaxed pl-5">
+              <p className="text-[12px] text-[#4b5563] leading-relaxed pl-6">
                 {item.answer}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="text-center pt-1">
+        <div className="text-center pt-2">
           <button
             type="button"
             onClick={() => navigate('/faq')}
-            className="inline-flex items-center gap-1 text-xs font-bold text-[#0095F6] hover:underline cursor-pointer"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#2851a3] hover:underline cursor-pointer"
           >
-            <span>View All Questions</span>
+            <span>View all questions & requirements</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </section>
+
+      {/* ======================================================== */}
+      {/* 5. FLOATING META ASSISTANT WIDGET (FROM IMAGE 2)          */}
+      {/* ======================================================== */}
+      <div className="fixed bottom-20 right-4 z-40">
+        <button
+          type="button"
+          onClick={() => navigate('/support')}
+          aria-label="Meta Assistant Support"
+          title="Meta Verified Support"
+          className="w-12 h-12 rounded-full bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-black/[0.06] flex items-center justify-center active:scale-95 transition-transform hover:shadow-xl cursor-pointer"
+        >
+          <MetaAssistantIcon />
+        </button>
+      </div>
     </div>
   );
 };
