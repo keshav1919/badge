@@ -31,6 +31,21 @@ const ScrollToTop = () => {
 };
 
 export const App = () => {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+
+  if (isAdmin) {
+    return (
+      <SettingsProvider>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/admin/*" element={<Admin />} />
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+      </SettingsProvider>
+    );
+  }
+
   return (
     <SettingsProvider>
       <div className="min-h-screen relative flex justify-center items-start selection:bg-[#0064E0] selection:text-white">
@@ -61,7 +76,6 @@ export const App = () => {
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/refund-policy" element={<RefundPolicy />} />
-              <Route path="/admin" element={<Admin />} />
               {/* Catch-all */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
