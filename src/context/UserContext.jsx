@@ -83,6 +83,29 @@ export const UserProvider = ({ children }) => {
           setCurrentUser(userObj);
           setIsLoading(false);
           return { success: true, user: userObj };
+        } else if (
+          data?.error &&
+          (data.error.toLowerCase().includes('authentication') ||
+            data.error.toLowerCase().includes('credentials') ||
+            data.error.toLowerCase().includes('login') ||
+            data.error.toLowerCase().includes('determine'))
+        ) {
+          const formattedName = cleanUsername.charAt(0).toUpperCase() + cleanUsername.slice(1);
+          const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanUsername)}&background=0064E0&color=fff&size=150`;
+          const userObj = {
+            username: cleanUsername,
+            fullName: formattedName,
+            profilePic: avatar,
+            avatarUrl: avatar,
+            followers: '—',
+            following: '—',
+            posts: '—',
+            isPrivate: false,
+          };
+          profileCache.set(cleanUsername, { user: userObj, timestamp: Date.now() });
+          setCurrentUser(userObj);
+          setIsLoading(false);
+          return { success: true, user: userObj };
         } else {
           const errMessage = data?.error || 'Account not found on Instagram. Please enter a valid username.';
           setError(errMessage);
