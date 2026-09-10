@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import VerifiedBadge from './VerifiedBadge';
 import { useUser } from '../context/UserContext';
+import { getAvatarProxyUrl } from '../config/api';
 
 export const ProfilePreview = ({
   username: propUsername,
@@ -34,7 +35,7 @@ export const ProfilePreview = ({
   const followers = propFollowers || currentUser?.followers || '2,529';
   const following = propFollowing || currentUser?.following || '3';
   const posts = propPosts || currentUser?.posts || '44';
-  const avatarSrc = currentUser?.avatarUrl || currentUser?.profilePic || (currentUser?.rawProfilePic ? `/api/avatar-proxy?url=${encodeURIComponent(currentUser.rawProfilePic)}` : null);
+  const avatarSrc = currentUser?.avatarUrl || currentUser?.profilePic || getAvatarProxyUrl(currentUser?.rawProfilePic);
 
   const highlights = [
     { label: 'Portfolio', icon: Palette },

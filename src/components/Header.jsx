@@ -4,6 +4,7 @@ import { ChevronLeft, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
 import MetaLogo from './MetaLogo';
 import { useUser } from '../context/UserContext';
 import { UsernameModal } from './UsernameModal';
+import { getAvatarProxyUrl } from '../config/api';
 
 export const Header = () => {
   const location = useLocation();
@@ -15,7 +16,7 @@ export const Header = () => {
   const userAvatarSrc =
     currentUser?.avatarUrl ||
     currentUser?.profilePic ||
-    (currentUser?.rawProfilePic ? `/api/avatar-proxy?url=${encodeURIComponent(currentUser.rawProfilePic)}` : null);
+    getAvatarProxyUrl(currentUser?.rawProfilePic);
 
   return (
     <>

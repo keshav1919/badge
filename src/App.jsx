@@ -18,6 +18,8 @@ import Support from './pages/Support';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import RefundPolicy from './pages/RefundPolicy';
+import Admin from './pages/Admin';
+import { SettingsProvider } from './context/SettingsContext';
 
 // Scroll to top helper on route change
 const ScrollToTop = () => {
@@ -30,46 +32,49 @@ const ScrollToTop = () => {
 
 export const App = () => {
   return (
-    <div className="min-h-screen relative flex justify-center items-start selection:bg-[#0064E0] selection:text-white">
-      {/* GPU Accelerated Fixed Background Layer (Zero repaint during scroll) */}
-      <div className="fixed inset-0 pointer-events-none -z-10 meta-mesh-bg" aria-hidden="true" />
+    <SettingsProvider>
+      <div className="min-h-screen relative flex justify-center items-start selection:bg-[#0064E0] selection:text-white">
+        {/* GPU Accelerated Fixed Background Layer (Zero repaint during scroll) */}
+        <div className="fixed inset-0 pointer-events-none -z-10 meta-mesh-bg" aria-hidden="true" />
 
-      {/* 420px Mobile Container */}
-      <div className="w-full max-w-[420px] min-h-screen flex flex-col bg-transparent text-[#1c1e21] relative overflow-x-hidden border-x border-black/[0.06]">
-        <ScrollToTop />
+        {/* 420px Mobile Container */}
+        <div className="w-full max-w-[420px] min-h-screen flex flex-col bg-transparent text-[#1c1e21] relative overflow-x-hidden border-x border-black/[0.06]">
+          <ScrollToTop />
 
-        {/* Mobile Top Header */}
-        <Header />
+          {/* Mobile Top Header */}
+          <Header />
 
-        {/* Content Area */}
-        <main className="flex-1 pb-16">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/plans" element={<Plans />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/payment-failed" element={<PaymentFailed />} />
-            <Route path="/orders" element={<Navigate to="/" replace />} />
-            <Route path="/order" element={<Navigate to="/" replace />} />
-            <Route path="/order/:id" element={<Navigate to="/" replace />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/refund-policy" element={<RefundPolicy />} />
-            {/* Catch-all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
+          {/* Content Area */}
+          <main className="flex-1 pb-16">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/plans" element={<Plans />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/payment-failed" element={<PaymentFailed />} />
+              <Route path="/orders" element={<Navigate to="/" replace />} />
+              <Route path="/order" element={<Navigate to="/" replace />} />
+              <Route path="/order/:id" element={<Navigate to="/" replace />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/refund-policy" element={<RefundPolicy />} />
+              <Route path="/admin" element={<Admin />} />
+              {/* Catch-all */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
 
-        {/* Mobile Fixed Bottom Navigation */}
-        <BottomNav />
+          {/* Mobile Fixed Bottom Navigation */}
+          <BottomNav />
 
-        {/* Mobile Footer */}
-        <Footer />
+          {/* Mobile Footer */}
+          <Footer />
+        </div>
       </div>
-    </div>
+    </SettingsProvider>
   );
 };
 

@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 import MetaLogo from './MetaLogo';
 import { CONTACT_CONFIG } from '../config/contact';
-import { PAYMENT_CONFIG } from '../config/payment';
+import { useSettings } from '../context/SettingsContext';
 
 export const Footer = () => {
+  const { settings } = useSettings();
   return (
     <footer className="bg-white border-t border-[#DBDBDB] mt-8 pt-8 pb-12 text-xs text-[#737373] w-full">
       <div className="w-full px-4 space-y-6">
@@ -22,7 +23,7 @@ export const Footer = () => {
           </p>
           <div className="pt-1 flex items-center justify-center sm:justify-start gap-2 text-[11px] text-[#0F1419] font-medium">
             <span className="bg-neutral-100 px-2 py-0.5 rounded-sm border border-neutral-200">
-              {PAYMENT_CONFIG.currencySymbol}{PAYMENT_CONFIG.amount} / year
+              {settings.currencySymbol}{settings.amount} / year
             </span>
             <span>•</span>
             <span>Cancel Anytime</span>
@@ -66,9 +67,12 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="pt-4 border-t border-neutral-100 text-center text-[10px] text-neutral-400">
-          © {new Date().getFullYear()} Meta Assist. All rights reserved.
+        {/* Copyright & Admin link */}
+        <div className="pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] text-neutral-400">
+          <span>© {new Date().getFullYear()} Meta Assist. All rights reserved.</span>
+          <Link to="/admin" className="text-neutral-400 hover:text-[#0064E0] transition-colors" title="Admin Panel">
+            Admin
+          </Link>
         </div>
       </div>
     </footer>

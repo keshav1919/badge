@@ -2,20 +2,12 @@
  * PAYMENT CONFIGURATION
  * 
  * Central configuration file for all payment settings.
- * DO NOT hardcode prices or UPI details elsewhere in the codebase.
- * 
- * To change the subscription price:
- * - Update `amount` below (e.g. 599)
- * 
- * To change the recipient UPI ID:
- * - Update `upiId` below (e.g. yourbusiness@icici or yourbusiness@okhdfcbank)
- * 
- * To switch to a real payment gateway (Razorpay / Cashfree / PhonePe PG):
- * - Change `isDemoMode` to false and provide your backend checkout endpoint in `gatewayEndpoint`.
- * - Never place secret API keys in this frontend file!
+ * Supports dynamic configuration via Admin Panel and backend sync.
  */
 
-export const PAYMENT_CONFIG = {
+export const STORAGE_KEY = 'app_web_settings';
+
+export const DEFAULT_PAYMENT_CONFIG = {
   // Main Subscription Price in INR
   amount: 30,
   currency: 'INR',
@@ -33,12 +25,59 @@ export const PAYMENT_CONFIG = {
 
   // Architecture flags
   isDemoMode: false,
-  gatewayEndpoint: '/api/create-order', // Real backend API endpoint when deployed
+  gatewayEndpoint: '/api/create-order',
   gatewayWebhookUrl: '/api/webhook/payment-verify',
 
   // Tax and billing calculation
   taxIncluded: true,
-  taxRatePercent: 0, // Included in ₹1
+  taxRatePercent: 0,
+};
+
+export const getStoredSettings = () => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    }
+  } catch (err) {
+    console.warn('Error reading app_web_settings from localStorage:', err);
+  }
+  return null;
+};
+
+// Initial state merged with any previously saved settings
+const initialOverrides = getStoredSettings() || {};
+
+export const PAYMENT_CONFIG = {
+  ...DEFAULT_PAYMENT_CONFIG,
+  ...initialOverrides,
+};
+
+export const updatePaymentConfig = (newSettings) => {
+  if (!newSettings || typeof newSettings !== 'object') return;
+  Object.assign(PAYMENT_CONFIG, newSettings);
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(PAYMENT_CONFIG));
+      window.dispatchEvent(new CustomEvent('app_settings_updated', { detail: PAYMENT_CONFIG }));
+    }
+  } catch (err) {
+    console.warn('Error saving app_web_settings to localStorage:', err);
+  }
+};
+
+export const resetPaymentConfig = () => {
+  Object.assign(PAYMENT_CONFIG, DEFAULT_PAYMENT_CONFIG);
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem(STORAGE_KEY);
+      window.dispatchEvent(new CustomEvent('app_settings_updated', { detail: DEFAULT_PAYMENT_CONFIG }));
+    }
+  } catch (err) {
+    console.warn('Error resetting app_web_settings in localStorage:', err);
+  }
 };
 
 export default PAYMENT_CONFIG;

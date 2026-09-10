@@ -27,6 +27,7 @@ dist-ssr
 # Environment variables
 .env
 .env.*
+!.env.example
 
 # Python / Scraping / Temporary test files
 __pycache__/

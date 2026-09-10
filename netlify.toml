@@ -2,26 +2,6 @@
   command = "npm run build"
   publish = "dist"
 
-[functions]
-  directory = "netlify/functions"
-
-# Instagram detection serverless API redirect
-[[redirects]]
-  from = "/api/instagram/:username"
-  to = "/.netlify/functions/instagram?username=:username"
-  status = 200
-
-[[redirects]]
-  from = "/api/instagram/*"
-  to = "/.netlify/functions/instagram?username=:splat"
-  status = 200
-
-# Instagram avatar proxy
-[[redirects]]
-  from = "/api/avatar-proxy"
-  to = "/.netlify/functions/avatar-proxy"
-  status = 200
-
 # React Router SPA catch-all fallback
 [[redirects]]
   from = "/*"

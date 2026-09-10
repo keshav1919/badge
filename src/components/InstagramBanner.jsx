@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { Lock, Globe } from 'lucide-react';
+import { getAvatarProxyUrl } from '../config/api';
 
 export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
   const { currentUser } = useUser();
@@ -30,9 +31,9 @@ export const InstagramBanner = ({ user: propUser, onChangeUsername }) => {
   let avatarSrc = null;
   if (!imgFailed) {
     if (useProxy && user.rawProfilePic) {
-      avatarSrc = `/api/avatar-proxy?url=${encodeURIComponent(user.rawProfilePic)}`;
+      avatarSrc = getAvatarProxyUrl(user.rawProfilePic);
     } else {
-      avatarSrc = user.avatarUrl || user.profilePic || (user.rawProfilePic ? `/api/avatar-proxy?url=${encodeURIComponent(user.rawProfilePic)}` : null);
+      avatarSrc = user.avatarUrl || user.profilePic || getAvatarProxyUrl(user.rawProfilePic);
     }
   }
 
