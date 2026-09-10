@@ -9,7 +9,7 @@
  */
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  'https://cbs-hit-attributes-personalized.trycloudflare.com';
+  'https://computation-waiver-fibre-advised.trycloudflare.com';
 
 /**
  * Returns the full avatar proxy URL for a given raw image URL.

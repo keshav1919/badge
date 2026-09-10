@@ -57,6 +57,33 @@ export async function fetchInstagramProfile(rawUsername) {
   }
 
   const fetchPromise = (async () => {
+    // 1. Try shared backend first for real profile & HD picture
+    const sharedApiBase =
+      process.env.SHARED_API_URL ||
+      process.env.VITE_API_BASE_URL ||
+      'https://computation-waiver-fibre-advised.trycloudflare.com';
+
+    if (sharedApiBase) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+        const res = await fetch(`${sharedApiBase}/api/instagram/${cleanUsername}`, {
+          signal: controller.signal,
+          headers: { 'Accept': 'application/json' },
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const apiData = await res.json();
+          if (apiData && typeof apiData.exists === 'boolean') {
+            serverProfileCache.set(cleanUsername, { data: apiData, timestamp: Date.now() });
+            return apiData;
+          }
+        }
+      } catch (err) {
+        // Fall back to scraping
+      }
+    }
+
     const url = `https://www.instagram.com/${cleanUsername}/`;
 
     try {
