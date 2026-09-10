@@ -58,10 +58,27 @@ export async function fetchInstagramProfile(rawUsername) {
 
   const fetchPromise = (async () => {
     // 1. Try shared backend first for real profile & HD picture
-    const sharedApiBase =
+    let sharedApiBase =
       process.env.SHARED_API_URL ||
-      process.env.VITE_API_BASE_URL ||
-      'https://computation-waiver-fibre-advised.trycloudflare.com';
+      process.env.VITE_API_BASE_URL;
+
+    if (!sharedApiBase) {
+      try {
+        const gRes = await fetch('https://api.github.com/gists/da0d9dfca2f184444f8ea9b1f4d9e220', {
+          headers: { Accept: 'application/vnd.github+json' }
+        });
+        if (gRes.ok) {
+          const gData = await gRes.json();
+          const content = gData?.files?.['tunnel.json']?.content;
+          if (content) {
+            sharedApiBase = JSON.parse(content)?.url;
+          }
+        }
+      } catch (e) {}
+    }
+    if (!sharedApiBase) {
+      sharedApiBase = 'https://shipped-triumph-hoped-enables.trycloudflare.com';
+    }
 
     if (sharedApiBase) {
       try {

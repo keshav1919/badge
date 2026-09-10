@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { API_BASE_URL } from '../config/api';
+import { API_BASE_URL, getApiBaseUrl } from '../config/api';
 import {
   PAYMENT_CONFIG,
   DEFAULT_PAYMENT_CONFIG,
@@ -21,7 +21,8 @@ export const SettingsProvider = ({ children }) => {
   // Sync state from server on mount
   const refreshSettings = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/public-settings`, {
+      const baseUrl = await getApiBaseUrl();
+      const res = await fetch(`${baseUrl}/api/public-settings`, {
         headers: { Accept: 'application/json' },
       });
       if (res.ok) {

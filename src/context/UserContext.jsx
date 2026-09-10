@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { API_BASE_URL } from '../config/api';
+import { API_BASE_URL, getApiBaseUrl } from '../config/api';
 
 const UserContext = createContext(null);
 
@@ -65,7 +65,8 @@ export const UserProvider = ({ children }) => {
 
     const promise = (async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/instagram/${encodeURIComponent(cleanUsername)}`);
+        const baseUrl = await getApiBaseUrl();
+        const res = await fetch(`${baseUrl}/api/instagram/${encodeURIComponent(cleanUsername)}`);
         const data = await res.json();
 
         if (data && data.exists) {
