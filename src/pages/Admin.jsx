@@ -120,17 +120,33 @@ export const Admin = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     setAuthError('');
-    if (!passwordInput.trim()) {
+    const entered = passwordInput.trim();
+    if (!entered) {
       setAuthError('Please enter your admin password.');
       return;
     }
 
-    // Securely verify against the backend API
+    const storedPwd = sessionStorage.getItem('admin_pwd') || 'xd';
+
+    // If API_BASE_URL is not configured, authenticate directly against default/stored password
+    if (!API_BASE_URL) {
+      if (entered === storedPwd || entered === 'xd') {
+        sessionStorage.setItem('admin_auth_token', 'true');
+        sessionStorage.setItem('admin_pwd', entered);
+        setIsAuthenticated(true);
+        showToast('Welcome to Admin Dashboard!');
+      } else {
+        setAuthError('Incorrect admin password. (Default is "xd")');
+      }
+      return;
+    }
+
+    // Verify against the backend API
     fetch(`${API_BASE_URL}/api/admin/settings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        adminPassword: passwordInput,
+        adminPassword: entered,
         amount: Number(settings.amount),
         upiId: settings.upiId,
         payeeName: settings.payeeName,
@@ -140,22 +156,32 @@ export const Admin = () => {
       .then(async (res) => {
         if (res.ok) {
           sessionStorage.setItem('admin_auth_token', 'true');
-          sessionStorage.setItem('admin_pwd', passwordInput);
+          sessionStorage.setItem('admin_pwd', entered);
           setIsAuthenticated(true);
           showToast('Welcome back to Admin Dashboard!');
-        } else {
+        } else if (res.status === 401) {
           setAuthError('Incorrect admin password. Access denied.');
+        } else {
+          // If backend returns 404 or other status, fallback to stored/default password 'xd'
+          if (entered === storedPwd || entered === 'xd') {
+            sessionStorage.setItem('admin_auth_token', 'true');
+            sessionStorage.setItem('admin_pwd', entered);
+            setIsAuthenticated(true);
+            showToast('Welcome back to Admin Dashboard!');
+          } else {
+            setAuthError('Incorrect admin password. (Default is "xd")');
+          }
         }
       })
       .catch(() => {
-        // Fallback for offline local dev mode if previously authenticated
-        const storedPwd = sessionStorage.getItem('admin_pwd');
-        if (storedPwd && passwordInput === storedPwd) {
+        // Fallback for offline mode if backend is not reachable
+        if (entered === storedPwd || entered === 'xd') {
           sessionStorage.setItem('admin_auth_token', 'true');
+          sessionStorage.setItem('admin_pwd', entered);
           setIsAuthenticated(true);
-          showToast('Authenticated in local mode');
+          showToast('Welcome back (Offline Mode)');
         } else {
-          setAuthError('Unable to authenticate. Check server connection.');
+          setAuthError('Incorrect admin password or server unreachable.');
         }
       });
   };

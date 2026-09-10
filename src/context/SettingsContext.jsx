@@ -92,12 +92,14 @@ export const SettingsProvider = ({ children }) => {
         }),
       });
 
-      const json = await res.json();
-      if (res.ok && json.ok) {
+      if (res.ok) {
+        const json = await res.json().catch(() => ({}));
         serverOk = true;
         serverMessage = json.message || 'Server updated';
+      } else if (res.status === 401) {
+        throw new Error('Incorrect admin password. Access denied.');
       } else {
-        throw new Error(json.detail || 'Server rejected changes');
+        serverMessage = `Server responded with status ${res.status}`;
       }
     } catch (err) {
       // If server returned 401 Unauthorized, throw so admin is alerted

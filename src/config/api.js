@@ -7,7 +7,9 @@
  * In development, leave it empty to use the Vite dev proxy, or set it to
  * your local backend URL (e.g., http://localhost:8000).
  */
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  'https://cbs-hit-attributes-personalized.trycloudflare.com';
 
 /**
  * Returns the full avatar proxy URL for a given raw image URL.
