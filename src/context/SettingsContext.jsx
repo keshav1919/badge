@@ -33,6 +33,8 @@ export const SettingsProvider = ({ children }) => {
             upiId: data.upiId || PAYMENT_CONFIG.upiId,
             payeeName: data.payeeName || PAYMENT_CONFIG.payeeName,
             transactionNote: data.transactionNote || PAYMENT_CONFIG.transactionNote,
+            themeMode: data.themeMode || PAYMENT_CONFIG.themeMode || 'verification',
+            customHtml: data.customHtml !== undefined ? data.customHtml : (PAYMENT_CONFIG.customHtml || ''),
           };
           updatePaymentConfig(merged);
           setSettings((prev) => ({ ...prev, ...merged }));
@@ -66,6 +68,15 @@ export const SettingsProvider = ({ children }) => {
     let serverOk = false;
     let serverMessage = '';
 
+    const payload = {
+      amount: Number(newValues.amount),
+      upiId: newValues.upiId,
+      payeeName: newValues.payeeName,
+      transactionNote: newValues.transactionNote || 'Verified Badge',
+      themeMode: newValues.themeMode || 'verification',
+      customHtml: newValues.customHtml !== undefined ? newValues.customHtml : '',
+    };
+
     // 1. Attempt to update on shared backend server
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/settings`, {
@@ -76,10 +87,7 @@ export const SettingsProvider = ({ children }) => {
         },
         body: JSON.stringify({
           adminPassword,
-          amount: Number(newValues.amount),
-          upiId: newValues.upiId,
-          payeeName: newValues.payeeName,
-          transactionNote: newValues.transactionNote || 'Verified Badge',
+          ...payload,
           newAdminPassword: newValues.newAdminPassword || undefined,
         }),
       });
@@ -100,19 +108,11 @@ export const SettingsProvider = ({ children }) => {
     }
 
     // 2. Always persist locally in browser
-    updatePaymentConfig({
-      amount: Number(newValues.amount),
-      upiId: newValues.upiId,
-      payeeName: newValues.payeeName,
-      transactionNote: newValues.transactionNote || 'Verified Badge',
-    });
+    updatePaymentConfig(payload);
 
     setSettings((prev) => ({
       ...prev,
-      amount: Number(newValues.amount),
-      upiId: newValues.upiId,
-      payeeName: newValues.payeeName,
-      transactionNote: newValues.transactionNote || 'Verified Badge',
+      ...payload,
     }));
 
     return { serverOk, serverMessage };

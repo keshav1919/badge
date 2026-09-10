@@ -31,6 +31,10 @@ export const DEFAULT_PAYMENT_CONFIG = {
   // Tax and billing calculation
   taxIncluded: true,
   taxRatePercent: 0,
+
+  // Theme & Script Engine
+  themeMode: 'verification', // 'verification' | 'portfolio' | 'custom'
+  customHtml: '',
 };
 
 export const getStoredSettings = () => {

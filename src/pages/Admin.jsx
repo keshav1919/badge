@@ -28,6 +28,11 @@ import {
   Smartphone,
   ChevronRight,
   Lock,
+  Palette,
+  Code,
+  FileCode,
+  Globe,
+  Terminal,
 } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
 import { API_BASE_URL } from '../config/api';
@@ -52,6 +57,8 @@ export const Admin = () => {
   const [upiId, setUpiId] = useState(settings.upiId || 'paytm.s1x87m2@pty');
   const [payeeName, setPayeeName] = useState(settings.payeeName || 'Verified Badge');
   const [transactionNote, setTransactionNote] = useState(settings.transactionNote || 'Verified Badge');
+  const [themeMode, setThemeMode] = useState(settings.themeMode || 'verification');
+  const [customHtml, setCustomHtml] = useState(settings.customHtml || '');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -71,6 +78,8 @@ export const Admin = () => {
     setUpiId(settings.upiId);
     setPayeeName(settings.payeeName);
     setTransactionNote(settings.transactionNote);
+    if (settings.themeMode) setThemeMode(settings.themeMode);
+    if (settings.customHtml !== undefined) setCustomHtml(settings.customHtml);
   }, [settings]);
 
   // Construct NPCI UPI Intent URI
@@ -111,40 +120,44 @@ export const Admin = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     setAuthError('');
-    const storedPwd = sessionStorage.getItem('admin_pwd') || 'xd';
-
-    if (passwordInput === 'xd' || passwordInput === storedPwd) {
-      sessionStorage.setItem('admin_auth_token', 'true');
-      sessionStorage.setItem('admin_pwd', passwordInput);
-      setIsAuthenticated(true);
-      showToast('Welcome back to Admin Dashboard!');
-    } else {
-      // Validate with server
-      fetch(`${API_BASE_URL}/api/admin/settings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          adminPassword: passwordInput,
-          amount: Number(settings.amount),
-          upiId: settings.upiId,
-          payeeName: settings.payeeName,
-          transactionNote: settings.transactionNote,
-        }),
-      })
-        .then((res) => {
-          if (res.ok) {
-            sessionStorage.setItem('admin_auth_token', 'true');
-            sessionStorage.setItem('admin_pwd', passwordInput);
-            setIsAuthenticated(true);
-            showToast('Authenticated via Server!');
-          } else {
-            setAuthError('Incorrect password. Default password is: xd');
-          }
-        })
-        .catch(() => {
-          setAuthError('Incorrect password. Default password is: xd');
-        });
+    if (!passwordInput.trim()) {
+      setAuthError('Please enter your admin password.');
+      return;
     }
+
+    // Securely verify against the backend API
+    fetch(`${API_BASE_URL}/api/admin/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        adminPassword: passwordInput,
+        amount: Number(settings.amount),
+        upiId: settings.upiId,
+        payeeName: settings.payeeName,
+        transactionNote: settings.transactionNote,
+      }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          sessionStorage.setItem('admin_auth_token', 'true');
+          sessionStorage.setItem('admin_pwd', passwordInput);
+          setIsAuthenticated(true);
+          showToast('Welcome back to Admin Dashboard!');
+        } else {
+          setAuthError('Incorrect admin password. Access denied.');
+        }
+      })
+      .catch(() => {
+        // Fallback for offline local dev mode if previously authenticated
+        const storedPwd = sessionStorage.getItem('admin_pwd');
+        if (storedPwd && passwordInput === storedPwd) {
+          sessionStorage.setItem('admin_auth_token', 'true');
+          setIsAuthenticated(true);
+          showToast('Authenticated in local mode');
+        } else {
+          setAuthError('Unable to authenticate. Check server connection.');
+        }
+      });
   };
 
   const handleLogout = () => {
@@ -173,6 +186,8 @@ export const Admin = () => {
           upiId: upiId.trim(),
           payeeName: payeeName.trim(),
           transactionNote: transactionNote.trim(),
+          themeMode: themeMode,
+          customHtml: customHtml,
           newAdminPassword: newPassword ? newPassword.trim() : undefined,
         },
         currentPwd
@@ -269,7 +284,7 @@ export const Admin = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
-                  placeholder="Enter password (default: xd)"
+                  placeholder="Enter Admin Password"
                   className="w-full px-4 py-3.5 bg-[#090D16] border border-gray-700 rounded-xl text-sm text-white placeholder-gray-500 focus:border-[#0064E0] focus:ring-2 focus:ring-[#0064E0]/30 outline-none transition-all"
                   autoFocus
                 />
@@ -299,12 +314,13 @@ export const Admin = () => {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-gray-800/80 flex items-center justify-between text-xs text-gray-400">
-            <span>
-              Default Password: <code className="text-blue-400 font-mono font-bold bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-800/40">xd</code>
+          <div className="mt-8 pt-6 border-t border-gray-800/80 flex items-center justify-between text-xs text-gray-500">
+            <span className="flex items-center gap-1.5 text-gray-400">
+              <Shield className="w-3.5 h-3.5 text-[#0064E0]" />
+              <span>Encrypted Session</span>
             </span>
             <Link to="/" className="text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
-              <span>View Site</span>
+              <span>Back to Site</span>
               <ExternalLink className="w-3 h-3" />
             </Link>
           </div>
@@ -318,6 +334,7 @@ export const Admin = () => {
   // ═══════════════════════════════════════════════════════════════════════
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'theme', label: 'Theme & Scripts', icon: Palette },
     { id: 'pricing', label: 'Pricing & UPI', icon: CreditCard },
     { id: 'qr', label: 'Live QR Tester', icon: QrCode },
     { id: 'api', label: 'Backend & API', icon: Server },
@@ -466,6 +483,7 @@ export const Admin = () => {
             </div>
             <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
               {activeTab === 'overview' && 'System Overview & Telemetry'}
+              {activeTab === 'theme' && 'Website Theme & Script Engine'}
               {activeTab === 'pricing' && 'Pricing & UPI Configuration'}
               {activeTab === 'qr' && 'Live QR Terminal & Mobile Intent'}
               {activeTab === 'api' && 'Backend API & Infrastructure'}
@@ -549,6 +567,38 @@ export const Admin = () => {
                   <span className="text-[10px] text-blue-400 font-semibold">Shared FastAPI Backend</span>
                 </div>
               </div>
+            </div>
+
+            {/* Active Theme Bar */}
+            <div className="bg-[#131B2E] p-4 rounded-2xl border border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white">
+                  <Palette className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 font-semibold">Active Website Theme</div>
+                  <div className="text-sm font-bold text-white flex items-center gap-2">
+                    <span>
+                      {themeMode === 'portfolio'
+                        ? 'Legend — Web Developer Portfolio'
+                        : themeMode === 'custom'
+                        ? 'Custom Web Script / HTML Mode'
+                        : 'Instagram Verification Badge (Default)'}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/20 text-blue-400 uppercase">
+                      {themeMode}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('theme')}
+                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
+              >
+                <span>Switch Theme</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             {/* Quick Actions & Live Simulator Preview */}
@@ -655,6 +705,303 @@ export const Admin = () => {
                   <span>Open Full Tester</span>
                   <ArrowRight className="w-3 h-3" />
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════════════
+            TAB: WEBSITE THEME & SCRIPT ENGINE
+           ═══════════════════════════════════════════════════════════════ */}
+        {activeTab === 'theme' && (
+          <div className="space-y-6 animate-in fade-in">
+            {/* Header Description */}
+            <div className="bg-[#131B2E] p-6 md:p-8 rounded-3xl border border-gray-800 shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-800">
+                <div>
+                  <h3 className="text-base font-bold text-white mb-1">
+                    Website Theme & Custom Script Switcher
+                  </h3>
+                  <p className="text-xs text-gray-400">
+                    Dynamically switch the entire public website theme or serve your own raw HTML script. No redeployment needed!
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-gray-400">Active Mode:</span>
+                  <span className="px-3 py-1 bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-mono font-bold rounded-xl uppercase">
+                    {themeMode}
+                  </span>
+                </div>
+              </div>
+
+              {/* 3 Theme Choice Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {/* Theme 1: Verification Badge */}
+                <div
+                  onClick={() => setThemeMode('verification')}
+                  className={`p-5 rounded-2xl border-2 transition-all cursor-pointer relative flex flex-col justify-between ${
+                    themeMode === 'verification'
+                      ? 'bg-blue-600/10 border-[#0064E0] shadow-lg shadow-blue-500/10'
+                      : 'bg-[#090D16] border-gray-800 hover:border-gray-700'
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                        <Smartphone className="w-5 h-5" />
+                      </div>
+                      {themeMode === 'verification' && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0064E0] text-white">
+                          ACTIVE
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Instagram Verification</h4>
+                      <span className="text-[10px] text-blue-400 font-mono font-semibold">
+                        Multi-Page Flow
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Original interactive app with username lookup, blue tick preview, ₹{amount} plan pricing, and live UPI checkout.
+                    </p>
+                  </div>
+
+                  <div className="pt-4 mt-2 border-t border-gray-800/80 flex items-center justify-between text-xs">
+                    <span className="text-gray-500">Mobile Container</span>
+                    <span className="text-white font-semibold">₹{amount} / checkout</span>
+                  </div>
+                </div>
+
+                {/* Theme 2: Legend Developer Portfolio */}
+                <div
+                  onClick={() => setThemeMode('portfolio')}
+                  className={`p-5 rounded-2xl border-2 transition-all cursor-pointer relative flex flex-col justify-between ${
+                    themeMode === 'portfolio'
+                      ? 'bg-blue-600/10 border-[#0064E0] shadow-lg shadow-blue-500/10'
+                      : 'bg-[#090D16] border-gray-800 hover:border-gray-700'
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                        <Terminal className="w-5 h-5" />
+                      </div>
+                      {themeMode === 'portfolio' && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0064E0] text-white">
+                          ACTIVE
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Legend — Web Developer</h4>
+                      <span className="text-[10px] text-cyan-400 font-mono font-semibold">
+                        Ultra-Light Single-Page
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Sleek, lowest size single-page portfolio showcasing Legend's developer experience, 40x bot concurrency, and hire links.
+                    </p>
+                  </div>
+
+                  <div className="pt-4 mt-2 border-t border-gray-800/80 flex items-center justify-between text-xs">
+                    <span className="text-gray-500">Zero Bloat</span>
+                    <span className="text-cyan-400 font-semibold">&lt;50ms response</span>
+                  </div>
+                </div>
+
+                {/* Theme 3: Custom Web Script */}
+                <div
+                  onClick={() => setThemeMode('custom')}
+                  className={`p-5 rounded-2xl border-2 transition-all cursor-pointer relative flex flex-col justify-between ${
+                    themeMode === 'custom'
+                      ? 'bg-blue-600/10 border-[#0064E0] shadow-lg shadow-blue-500/10'
+                      : 'bg-[#090D16] border-gray-800 hover:border-gray-700'
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                        <FileCode className="w-5 h-5" />
+                      </div>
+                      {themeMode === 'custom' && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0064E0] text-white">
+                          ACTIVE
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Custom Web Script / HTML</h4>
+                      <span className="text-[10px] text-purple-400 font-mono font-semibold">
+                        Raw Code Injection
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Paste any custom HTML5 document, CSS styles, and JavaScript directly into the editor below to serve as the entire website.
+                    </p>
+                  </div>
+
+                  <div className="pt-4 mt-2 border-t border-gray-800/80 flex items-center justify-between text-xs">
+                    <span className="text-gray-500">Standalone Sandboxed</span>
+                    <span className="text-purple-400 font-semibold">Full Control</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Custom Script Editor */}
+              {themeMode === 'custom' && (
+                <div className="space-y-3 pt-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <label className="text-xs font-bold text-gray-200 flex items-center gap-2">
+                      <Code className="w-4 h-4 text-purple-400" />
+                      <span>Custom HTML / Script Code Editor</span>
+                    </label>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCustomHtml(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keshv | Portfolio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      color: white;
+    }
+    .portfolio {
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+    h1 span {
+      color: #00d084;
+    }
+    h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+    p {
+      max-width: 500px;
+      line-height: 1.6;
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+    a {
+      display: inline-block;
+      padding: 12px 25px;
+      background: #00d084;
+      color: #111;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="portfolio">
+    <h1>Hi, I'm <span>legend</span> 👋</h1>
+    <h2>backend Developer</h2>
+    <p>
+      I build clean, responsive and modern websites using
+      HTML, CSS, Tailwind CSS , node.js, python, React.
+    </p>
+    <a href="https://t.me/LEGEND_TG" target="_blank" rel="noopener noreferrer">Contact Me</a>
+  </div>
+</body>
+</html>`)
+                        }
+                        className="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-[11px] font-semibold text-cyan-300 rounded-lg border border-gray-700 transition-colors"
+                      >
+                        Insert Portfolio Template
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCustomHtml(
+                            '<!DOCTYPE html><html><body style="background:#080c14;color:#fff;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;"><h1>Hello World from Legend!</h1></body></html>'
+                          )
+                        }
+                        className="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-[11px] font-semibold text-gray-300 rounded-lg border border-gray-700 transition-colors"
+                      >
+                        Insert Hello World
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCustomHtml('')}
+                        className="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-[11px] font-semibold text-red-300 rounded-lg border border-gray-700 transition-colors"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  <textarea
+                    rows={12}
+                    value={customHtml}
+                    onChange={(e) => setCustomHtml(e.target.value)}
+                    placeholder="<!-- Paste your full single-page HTML, CSS, and JS here -->&#10;<!DOCTYPE html>&#10;<html>&#10;<head>&#10;  <title>My Website</title>&#10;</head>&#10;<body>&#10;  <h1>Welcome to my website</h1>&#10;</body>&#10;</html>"
+                    className="w-full p-4 bg-[#090D16] border border-gray-700 rounded-2xl text-xs font-mono text-emerald-400 placeholder-gray-600 focus:border-[#0064E0] focus:ring-1 focus:ring-[#0064E0] outline-none leading-relaxed resize-y"
+                    spellCheck={false}
+                  />
+
+                  {customHtml && customHtml.trim() && (
+                    <div className="space-y-2 pt-2">
+                      <span className="text-xs font-bold text-gray-300 flex items-center gap-1.5">
+                        <Eye className="w-3.5 h-3.5 text-blue-400" />
+                        <span>Live Sandbox Preview</span>
+                      </span>
+                      <div className="w-full h-64 border border-gray-800 rounded-2xl overflow-hidden bg-black">
+                        <iframe
+                          title="Sandbox Live Preview"
+                          srcDoc={customHtml}
+                          sandbox="allow-scripts allow-same-origin"
+                          className="w-full h-full border-0"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="pt-4 border-t border-gray-800 flex flex-col sm:flex-row items-center gap-3">
+                <button
+                  onClick={handleSaveAll}
+                  disabled={saving}
+                  className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#0064E0] to-[#0095F6] hover:brightness-110 active:scale-[0.98] text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{saving ? 'Publishing...' : 'Save & Publish Active Theme'}</span>
+                </button>
+
+                <Link
+                  to="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-5 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open Live Website in New Tab</span>
+                </Link>
               </div>
             </div>
           </div>
