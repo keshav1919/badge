@@ -92,7 +92,7 @@ export const UsernameModal = ({ isOpen, onClose, redirectPath = '/plans' }) => {
                   <span className="truncate">@{currentUser.username}</span>
                 </div>
                 <div className="text-[11px] text-[#737373] truncate">
-                  {currentUser.followers} followers • {currentUser.isPrivate ? 'Private' : 'Public'}
+                  {currentUser.isPrivate ? '🔒 Private Account' : `${currentUser.followers} followers • Public`}
                 </div>
               </div>
             </div>

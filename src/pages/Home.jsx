@@ -132,9 +132,15 @@ export const Home = () => {
                   <span className="truncate">@{currentUser.username}</span>
                 </div>
                 <div className="text-[11px] text-[#737373] truncate flex items-center gap-1">
-                  <span>{currentUser.followers} followers</span>
-                  <span>•</span>
-                  <span>{currentUser.isPrivate ? 'Private' : 'Public'}</span>
+                  {currentUser.isPrivate ? (
+                    <span>🔒 Private Account</span>
+                  ) : (
+                    <>
+                      <span>{currentUser.followers} followers</span>
+                      <span>•</span>
+                      <span>Public</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
