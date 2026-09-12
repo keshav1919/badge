@@ -77,7 +77,7 @@ export async function fetchInstagramProfile(rawUsername) {
       } catch (e) {}
     }
     if (!sharedApiBase) {
-      sharedApiBase = 'https://shipped-triumph-hoped-enables.trycloudflare.com';
+      sharedApiBase = 'https://legendtech.store';
     }
 
     if (sharedApiBase) {

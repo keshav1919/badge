@@ -9,7 +9,7 @@ const GIST_API_URL = 'https://api.github.com/gists/da0d9dfca2f184444f8ea9b1f4d9e
 
 export let API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  'https://shipped-triumph-hoped-enables.trycloudflare.com';
+  'https://legendtech.store';
 
 let cachedApiUrl = null;
 let lastFetchTime = 0;
