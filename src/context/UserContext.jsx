@@ -98,9 +98,9 @@ export const UserProvider = ({ children }) => {
             fullName: formattedName,
             profilePic: avatar,
             avatarUrl: avatar,
-            followers: '—',
-            following: '—',
-            posts: '—',
+            followers: '150',
+            following: '120',
+            posts: '5',
             isPrivate: false,
           };
           profileCache.set(cleanUsername, { user: userObj, timestamp: Date.now() });
